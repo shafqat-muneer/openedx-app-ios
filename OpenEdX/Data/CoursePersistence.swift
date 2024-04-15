@@ -139,7 +139,8 @@ public class CoursePersistence: CoursePersistenceProtocol {
                 )
             ),
             certificate: DataLayer.Certificate(url: structure.certificate),
-            isSelfPaced: structure.isSelfPaced
+            isSelfPaced: structure.isSelfPaced,
+            mode: structure.mode
         )
     }
     
@@ -153,6 +154,7 @@ public class CoursePersistence: CoursePersistenceProtocol {
             newStructure.id = structure.id
             newStructure.rootItem = structure.rootItem
             newStructure.isSelfPaced = structure.isSelfPaced
+            newStructure.mode = structure.mode
             
             for block in Array(structure.dict.values) {
                 let courseDetail = CDCourseBlock(context: self.context)

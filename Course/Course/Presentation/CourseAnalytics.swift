@@ -11,7 +11,7 @@ import Core
 public enum EnrollmentMode: String {
     case audit
     case verified
-    case none
+    case unknown
 }
 
 public enum CoursePacing: String {

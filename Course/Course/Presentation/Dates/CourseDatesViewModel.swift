@@ -468,7 +468,7 @@ extension CourseDatesViewModel {
 extension CourseDatesViewModel {
     private func trackCalendarSyncToggle(action: CalendarDialogueAction) {
         analytics.calendarSyncToggle(
-            enrollmentMode: .none,
+            enrollmentMode: EnrollmentMode(rawValue: courseStructure?.mode ?? "") ?? .unknown,
             pacing: courseStructure?.isSelfPaced ?? true ? .`self` : .instructor,
             courseId: courseID,
             action: action
@@ -477,7 +477,7 @@ extension CourseDatesViewModel {
     
     private func trackCalendarSyncDialogAction(dialog: CalendarDialogueType, action: CalendarDialogueAction) {
         analytics.calendarSyncDialogAction(
-            enrollmentMode: .none,
+            enrollmentMode: EnrollmentMode(rawValue: courseStructure?.mode ?? "") ?? .unknown,
             pacing: courseStructure?.isSelfPaced ?? true ? .`self` : .instructor,
             courseId: courseID,
             dialog: dialog,
@@ -487,7 +487,7 @@ extension CourseDatesViewModel {
     
     private func trackCalendarSyncSnackbar(snackbar: SnackbarType) {
         analytics.calendarSyncSnackbar(
-            enrollmentMode: .none,
+            enrollmentMode: EnrollmentMode(rawValue: courseStructure?.mode ?? "") ?? .unknown,
             pacing: courseStructure?.isSelfPaced ?? true ? .`self` : .instructor,
             courseId: courseID,
             snackbar: snackbar

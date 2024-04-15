@@ -97,7 +97,8 @@ final class CourseContainerViewModelTests: XCTestCase {
                                                                 small: "",
                                                                 large: "")),
             certificate: nil,
-            isSelfPaced: true
+            isSelfPaced: true,
+            mode: ""
         )
         
         let resumeBlock = ResumeBlock(blockID: "123")
@@ -163,7 +164,8 @@ final class CourseContainerViewModelTests: XCTestCase {
                                                                 small: "",
                                                                 large: "")),
             certificate: nil,
-            isSelfPaced: true
+            isSelfPaced: true,
+            mode: ""
         )
         
         Given(interactor, .getLoadedCourseBlocks(courseID: .any, willReturn: courseStructure))
@@ -420,7 +422,8 @@ final class CourseContainerViewModelTests: XCTestCase {
                 large: ""
             )),
             certificate: nil,
-            isSelfPaced: true
+            isSelfPaced: true,
+            mode: ""
         )
 
         let downloadData = DownloadDataTask(
@@ -555,7 +558,8 @@ final class CourseContainerViewModelTests: XCTestCase {
                 large: ""
             )),
             certificate: nil,
-            isSelfPaced: true
+            isSelfPaced: true,
+            mode: ""
         )
 
         Given(connectivity, .isInternetAvaliable(getter: true))
@@ -675,7 +679,8 @@ final class CourseContainerViewModelTests: XCTestCase {
                 large: ""
             )),
             certificate: nil,
-            isSelfPaced: true
+            isSelfPaced: true,
+            mode: ""
         )
 
         Given(connectivity, .isInternetAvaliable(getter: true))
@@ -796,7 +801,8 @@ final class CourseContainerViewModelTests: XCTestCase {
                 large: ""
             )),
             certificate: nil,
-            isSelfPaced: true
+            isSelfPaced: true,
+            mode: ""
         )
 
         Given(connectivity, .isInternetAvaliable(getter: true))
@@ -910,7 +916,8 @@ final class CourseContainerViewModelTests: XCTestCase {
                 large: ""
             )),
             certificate: nil,
-            isSelfPaced: true
+            isSelfPaced: true,
+            mode: ""
         )
 
         let downloadData = DownloadDataTask(
@@ -1039,7 +1046,8 @@ final class CourseContainerViewModelTests: XCTestCase {
                 large: ""
             )),
             certificate: nil,
-            isSelfPaced: true
+            isSelfPaced: true,
+            mode: ""
         )
 
         let downloadData = DownloadDataTask(
@@ -1188,7 +1196,8 @@ final class CourseContainerViewModelTests: XCTestCase {
                 large: ""
             )),
             certificate: nil,
-            isSelfPaced: true
+            isSelfPaced: true,
+            mode: ""
         )
 
         let downloadData = DownloadDataTask(

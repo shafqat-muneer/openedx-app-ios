@@ -113,6 +113,7 @@ public extension DataLayer {
         public let courseSharingUtmParameters: CourseSharingUtmParameters
         public let videoOutline: String?
         public let isSelfPaced: Bool
+        public let mode: String?
 
         enum CodingKeys: String, CodingKey {
             case id
@@ -131,6 +132,7 @@ public extension DataLayer {
             case courseSharingUtmParameters = "course_sharing_utm_parameters"
             case videoOutline = "video_outline"
             case isSelfPaced = "is_self_paced"
+            case mode
         }
 
         public init(
@@ -149,7 +151,8 @@ public extension DataLayer {
             courseAbout: String,
             courseSharingUtmParameters: CourseSharingUtmParameters,
             videoOutline: String?,
-            isSelfPaced: Bool
+            isSelfPaced: Bool,
+            mode: String? = nil
         ) {
             self.id = id
             self.name = name
@@ -167,6 +170,7 @@ public extension DataLayer {
             self.courseSharingUtmParameters = courseSharingUtmParameters
             self.videoOutline = videoOutline
             self.isSelfPaced = isSelfPaced
+            self.mode = mode
         }
     }
 
