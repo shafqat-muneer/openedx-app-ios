@@ -75,6 +75,9 @@ public struct PrimaryCourseDashboardView<ProgramView: View>: View {
                                                     progressPossible: primary.progressPossible,
                                                     canResume: primary.lastVisitedBlockID != nil,
                                                     resumeTitle: primary.resumeTitle,
+                                                    auditAccessExpires: primary.auditAccessExpires,
+                                                    startDisplay: primary.startDisplay,
+                                                    startType: primary.startType,
                                                     assignmentAction: { lastVisitedBlockID in
                                                         router.showCourseScreens(
                                                             courseID: primary.courseID,
@@ -84,6 +87,9 @@ public struct PrimaryCourseDashboardView<ProgramView: View>: View {
                                                             enrollmentStart: nil,
                                                             enrollmentEnd: nil,
                                                             title: primary.name,
+                                                            org: primary.org,
+                                                            courseRawImage: nil,
+                                                            coursewareAccess: nil,
                                                             showDates: lastVisitedBlockID == nil,
                                                             lastVisitedBlockID: lastVisitedBlockID
                                                         )
@@ -97,6 +103,9 @@ public struct PrimaryCourseDashboardView<ProgramView: View>: View {
                                                             enrollmentStart: nil,
                                                             enrollmentEnd: nil,
                                                             title: primary.name,
+                                                            org: primary.org,
+                                                            courseRawImage: nil,
+                                                            coursewareAccess: nil,
                                                             showDates: false,
                                                             lastVisitedBlockID: nil
                                                         )
@@ -110,6 +119,9 @@ public struct PrimaryCourseDashboardView<ProgramView: View>: View {
                                                             enrollmentStart: nil,
                                                             enrollmentEnd: nil,
                                                             title: primary.name,
+                                                            org: primary.org,
+                                                            courseRawImage: nil,
+                                                            coursewareAccess: nil,
                                                             showDates: false,
                                                             lastVisitedBlockID: primary.lastVisitedBlockID
                                                         )
@@ -216,6 +228,9 @@ public struct PrimaryCourseDashboardView<ProgramView: View>: View {
                     enrollmentStart: course.enrollmentStart,
                     enrollmentEnd: course.enrollmentEnd,
                     title: course.name,
+                    org: course.org,
+                    courseRawImage: course.courseRawImage,
+                    coursewareAccess: course.coursewareAccess,
                     showDates: false,
                     lastVisitedBlockID: nil
                 )
@@ -228,7 +243,10 @@ public struct PrimaryCourseDashboardView<ProgramView: View>: View {
                     courseStartDate: nil,
                     courseEndDate: nil,
                     hasAccess: course.hasAccess,
-                    showProgress: false
+                    showProgress: false,
+                    auditAccessExpires: nil,
+                    startDisplay: nil,
+                    startType: nil
                 ).frame(width: idiom == .pad ? nil : 120)
             }
             )

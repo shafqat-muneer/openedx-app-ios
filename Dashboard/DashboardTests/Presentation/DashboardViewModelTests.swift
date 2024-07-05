@@ -18,7 +18,13 @@ final class ListDashboardViewModelTests: XCTestCase {
         let interactor = DashboardInteractorProtocolMock()
         let connectivity = ConnectivityProtocolMock()
         let analytics = DashboardAnalyticsMock()
-        let viewModel = ListDashboardViewModel(interactor: interactor, connectivity: connectivity, analytics: analytics)
+        let viewModel = ListDashboardViewModel(
+            interactor: interactor,
+            connectivity: connectivity,
+            analytics: analytics,
+            upgradehandler: CourseUpgradeHandlerProtocolMock(),
+            coreAnalytics: CoreAnalyticsMock()
+        )
         
         let items = [
             CourseItem(name: "Test",
@@ -33,8 +39,15 @@ final class ListDashboardViewModelTests: XCTestCase {
                        courseID: "123",
                        numPages: 2,
                        coursesCount: 2,
+                        isSelfPaced: false,
+                       courseRawImage: nil,
+                       coursewareAccess: nil,
                        progressEarned: 0,
-                       progressPossible: 0),
+                       progressPossible: 0,
+                       auditAccessExpires: nil,
+                       startDisplay: nil,
+                       startType: nil),
+            
             CourseItem(name: "Test2",
                        org: "org2",
                        shortDescription: "",
@@ -47,8 +60,14 @@ final class ListDashboardViewModelTests: XCTestCase {
                        courseID: "1243",
                        numPages: 1,
                        coursesCount: 2,
+                       isSelfPaced: false,
+                       courseRawImage: nil,
+                       coursewareAccess: nil,
                        progressEarned: 0,
-                       progressPossible: 0)
+                       progressPossible: 0,
+                       auditAccessExpires: nil,
+                       startDisplay: nil,
+                       startType: nil)
         ]
 
         Given(connectivity, .isInternetAvaliable(getter: true))
@@ -67,7 +86,13 @@ final class ListDashboardViewModelTests: XCTestCase {
         let interactor = DashboardInteractorProtocolMock()
         let connectivity = ConnectivityProtocolMock()
         let analytics = DashboardAnalyticsMock()
-        let viewModel = ListDashboardViewModel(interactor: interactor, connectivity: connectivity, analytics: analytics)
+        let viewModel = ListDashboardViewModel(
+            interactor: interactor,
+            connectivity: connectivity,
+            analytics: analytics,
+            upgradehandler: CourseUpgradeHandlerProtocolMock(),
+            coreAnalytics: CoreAnalyticsMock()
+        )
         
         let items = [
             CourseItem(name: "Test",
@@ -82,8 +107,15 @@ final class ListDashboardViewModelTests: XCTestCase {
                        courseID: "123",
                        numPages: 2,
                        coursesCount: 2,
+                       isSelfPaced: false,
+                       courseRawImage: nil,
+                       coursewareAccess: nil,
                        progressEarned: 0,
-                       progressPossible: 0),
+                       progressPossible: 0,
+                       auditAccessExpires: nil,
+                       startDisplay: nil,
+                       startType: nil),
+            
             CourseItem(name: "Test2",
                        org: "org2",
                        shortDescription: "",
@@ -96,8 +128,14 @@ final class ListDashboardViewModelTests: XCTestCase {
                        courseID: "1243",
                        numPages: 1,
                        coursesCount: 2,
+                       isSelfPaced: false,
+                       courseRawImage: nil,
+                       coursewareAccess: nil,
                        progressEarned: 0,
-                       progressPossible: 0)
+                       progressPossible: 0,
+                       auditAccessExpires: nil,
+                       startDisplay: nil,
+                       startType: nil)
         ]
         
         Given(connectivity, .isInternetAvaliable(getter: false))
@@ -116,7 +154,13 @@ final class ListDashboardViewModelTests: XCTestCase {
         let interactor = DashboardInteractorProtocolMock()
         let connectivity = ConnectivityProtocolMock()
         let analytics = DashboardAnalyticsMock()
-        let viewModel = ListDashboardViewModel(interactor: interactor, connectivity: connectivity, analytics: analytics)
+        let viewModel = ListDashboardViewModel(
+            interactor: interactor,
+            connectivity: connectivity,
+            analytics: analytics,
+            upgradehandler: CourseUpgradeHandlerProtocolMock(),
+            coreAnalytics: CoreAnalyticsMock()
+        )
         
         Given(connectivity, .isInternetAvaliable(getter: true))
         Given(interactor, .getEnrollments(page: .any, willThrow: NoCachedDataError()) )
@@ -134,7 +178,13 @@ final class ListDashboardViewModelTests: XCTestCase {
         let interactor = DashboardInteractorProtocolMock()
         let connectivity = ConnectivityProtocolMock()
         let analytics = DashboardAnalyticsMock()
-        let viewModel = ListDashboardViewModel(interactor: interactor, connectivity: connectivity, analytics: analytics)
+        let viewModel = ListDashboardViewModel(
+            interactor: interactor,
+            connectivity: connectivity,
+            analytics: analytics,
+            upgradehandler: CourseUpgradeHandlerProtocolMock(),
+            coreAnalytics: CoreAnalyticsMock()
+        )
         
         Given(connectivity, .isInternetAvaliable(getter: true))
         Given(interactor, .getEnrollments(page: .any, willThrow: NSError()) )

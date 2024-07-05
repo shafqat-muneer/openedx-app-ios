@@ -48,8 +48,15 @@ final class SearchViewModelTests: XCTestCase {
                        courseID: "123",
                        numPages: 2,
                        coursesCount: 0,
+                       isSelfPaced: false,
+                       courseRawImage: nil,
+                       coursewareAccess: nil,
                        progressEarned: 0,
-                       progressPossible: 0),
+                       progressPossible: 0,
+                       auditAccessExpires: nil,
+                       startDisplay: nil,
+                       startType: nil),
+            
             CourseItem(name: "Test2",
                        org: "org2",
                        shortDescription: "",
@@ -62,8 +69,14 @@ final class SearchViewModelTests: XCTestCase {
                        courseID: "1243",
                        numPages: 1,
                        coursesCount: 0,
+                       isSelfPaced: false,
+                       courseRawImage: nil,
+                       coursewareAccess: nil,
                        progressEarned: 0,
-                       progressPossible: 0)
+                       progressPossible: 0,
+                       auditAccessExpires: nil,
+                       startDisplay: nil,
+                       startType: nil)
         ]
 
         Given(interactor, .search(page: 1, searchTerm: .any, willReturn: items))

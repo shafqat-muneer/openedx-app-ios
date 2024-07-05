@@ -45,6 +45,18 @@ public extension Date {
         }
     }
     
+    func timeUntilDisplay() -> String {
+        let formatter = RelativeDateTimeFormatter()
+        formatter.locale = .current
+        formatter.unitsStyle = .full
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        if description == Date().description {
+            return CoreLocalization.Date.justNow
+        } else {
+            return formatter.localizedString(for: Date(), relativeTo: self)
+        }
+    }
+    
     init(subtitleTime: String) {
         let calendar = Calendar.current
         let now = Date()
@@ -84,6 +96,8 @@ public enum DateStringStyle {
     case lastPost
     case iso8601
     case shortWeekdayMonthDayYear
+    case monthDay
+    case monthDayYear
 }
 
 public extension Date {
@@ -100,7 +114,7 @@ public extension Date {
         return totalSeconds
     }
     
-    func dateToString(style: DateStringStyle) -> String {
+    func stringValue(style: DateStringStyle) -> String {
         let dateFormatter = DateFormatter()
         dateFormatter.locale = Locale(identifier: "en_US_POSIX")
         
@@ -123,9 +137,18 @@ public extension Date {
             dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
         case .shortWeekdayMonthDayYear:
             applyShortWeekdayMonthDayYear(dateFormatter: dateFormatter)
+        case .monthDayYear:
+            dateFormatter.dateFormat = "MMMM d, yyyy"
+        case .monthDay:
+            dateFormatter.dateFormat = "MMMM dd"
         }
         
-        let date = dateFormatter.string(from: self)
+        return dateFormatter.string(from: self)
+        
+    }
+    
+    func dateToString(style: DateStringStyle) -> String {
+        let date = stringValue(style: style)
 
         switch style {
         case .courseStartsMonthDDYear:
@@ -161,7 +184,10 @@ public extension Date {
             return date
         case .shortWeekdayMonthDayYear:
             return getShortWeekdayMonthDayYear(dateFormatterString: date)
+        case .monthDayYear, .monthDay:
+            return date
         }
+        
     }
     
     private func applyShortWeekdayMonthDayYear(dateFormatter: DateFormatter) {
@@ -222,5 +248,22 @@ public extension Date {
 
     func isLaterThanOrEqualTo(date: Date) -> Bool {
         timeIntervalSince1970 >= date.timeIntervalSince1970
+    }
+    
+    func isInPast() -> Bool {
+        let now = Date()
+        return now.compare(self) == .orderedDescending
+    }
+    
+    func daysAgo() -> Int {
+        let calendar = Calendar.current
+        let today = Date()
+        return calendar.dateComponents([.day], from: self, to: today).day ?? 0
+    }
+    
+    func daysUntil() -> Int {
+        let calendar = Calendar.current
+        let today = Date()
+        return calendar.dateComponents([.day], from: today, to: self).day ?? 0
     }
 }

@@ -213,7 +213,10 @@ public extension DataLayer.PrimaryEnrollment {
             progressEarned: primary.progress?.assignmentsCompleted ?? 0,
             progressPossible: primary.progress?.totalAssignmentsCount ?? 0,
             lastVisitedBlockID: primary.courseStatus?.lastVisitedBlockID,
-            resumeTitle: primary.courseStatus?.lastVisitedUnitDisplayName
+            resumeTitle: primary.courseStatus?.lastVisitedUnitDisplayName,
+            auditAccessExpires: primary.auditAccessExpires,
+            startDisplay: primary.course?.startDisplay.flatMap { Date(iso8601: $0) },
+            startType: DisplayStartType(value: primary.course?.startType.rawValue)
         )
     }
     
@@ -249,6 +252,21 @@ public extension DataLayer.PrimaryEnrollment {
         let encodedUrl = imageUrl.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
         let fullImageURL = baseURL + encodedUrl
         
+        let access = enrollment.course.coursewareAccess
+        var coursewareError: CourseAccessError?
+        if let error = access.errorCode {
+            coursewareError = CourseAccessError(rawValue: error.rawValue) ?? .unknown
+        }
+        
+        let coursewareAccess = CoursewareAccess(
+            hasAccess: access.hasAccess,
+            errorCode: coursewareError,
+            developerMessage: access.developerMessage,
+            userMessage: access.userMessage,
+            additionalContextUserMessage: access.additionalContextUserMessage,
+            userFragment: access.userFragment
+        )
+        
         return CourseItem(
             name: enrollment.course.name,
             org: enrollment.course.org,
@@ -262,8 +280,14 @@ public extension DataLayer.PrimaryEnrollment {
             courseID: enrollment.course.id,
             numPages: numPages,
             coursesCount: count,
+            isSelfPaced: enrollment.course.isSelfPaced,
+            courseRawImage: enrollment.course.media.image?.raw,
+            coursewareAccess: coursewareAccess,
             progressEarned: enrollment.progress?.assignmentsCompleted ?? 0,
-            progressPossible: enrollment.progress?.totalAssignmentsCount ?? 0
+            progressPossible: enrollment.progress?.totalAssignmentsCount ?? 0,
+            auditAccessExpires: enrollment.auditAccessExpires.flatMap { Date(iso8601: $0) },
+            startDisplay: enrollment.course.startDisplay.flatMap { Date(iso8601: $0) },
+            startType: DisplayStartType(value: enrollment.course.startType.rawValue)
         )
     }
 }
