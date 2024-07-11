@@ -158,7 +158,11 @@ public class DashboardPersistence: DashboardPersistenceProtocol {
                     resumeTitle: cdPrimaryCourse.resumeTitle,
                     auditAccessExpires: cdPrimaryCourse.auditAccessExpires,
                     startDisplay: cdPrimaryCourse.startDisplay,
-                    startType: DisplayStartType(value: cdPrimaryCourse.startType)
+                    startType: DisplayStartType(value: cdPrimaryCourse.startType),
+                    isUpgradeable: cdPrimaryCourse.isUpgradeable,
+                    sku: cdPrimaryCourse.sku,
+                    lmsPrice: cdPrimaryCourse.lmsPrice?.doubleValue,
+                    isSelfPaced: cdPrimaryCourse.isSelfPaced
                 )
             }
             
@@ -278,7 +282,10 @@ public class DashboardPersistence: DashboardPersistenceProtocol {
                     return cdAssignment
                 }
                 cdPrimaryCourse.pastAssignments = NSSet(array: pastAssignments)
-                
+                var lmsPrice: NSNumber?
+                if let price = primaryCourse.lmsPrice {
+                    lmsPrice = NSNumber(value: price)
+                }
                 cdPrimaryCourse.name = primaryCourse.name
                 cdPrimaryCourse.org = primaryCourse.org
                 cdPrimaryCourse.courseID = primaryCourse.courseID
@@ -290,6 +297,10 @@ public class DashboardPersistence: DashboardPersistenceProtocol {
                 cdPrimaryCourse.progressPossible = Int32(primaryCourse.progressPossible)
                 cdPrimaryCourse.lastVisitedBlockID = primaryCourse.lastVisitedBlockID
                 cdPrimaryCourse.resumeTitle = primaryCourse.resumeTitle
+                cdPrimaryCourse.sku = primaryCourse.sku
+                cdPrimaryCourse.lmsPrice = lmsPrice
+                cdPrimaryCourse.isUpgradeable = primaryCourse.isUpgradeable
+                cdPrimaryCourse.isSelfPaced = primaryCourse.isSelfPaced ?? false
                 
                 newEnrollment.primaryCourse = cdPrimaryCourse
             }

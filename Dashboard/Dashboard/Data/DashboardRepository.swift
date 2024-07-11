@@ -192,7 +192,11 @@ class DashboardRepositoryMock: DashboardRepositoryProtocol {
             resumeTitle: nil,
             auditAccessExpires: nil,
             startDisplay: nil,
-            startType: .unknown
+            startType: .unknown,
+            isUpgradeable: false,
+            sku: nil,
+            lmsPrice: nil,
+            isSelfPaced: false
         )
         return PrimaryEnrollment(primaryCourse: primaryCourse, courses: courses, totalPages: 1, count: 1)
     }

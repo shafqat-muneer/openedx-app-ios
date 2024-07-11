@@ -52,6 +52,29 @@ public extension DataLayer {
             case courseAssignments = "course_assignments"
         }
         
+        public var sku: String? {
+            let mode = courseModes?.first { $0.slug == .verified }
+            return mode?.iosSku
+        }
+        public var lmsPrice: Double? {
+            let mode = courseModes?.first { $0.slug == .verified }
+            return mode?.lmsPrice
+        }
+        
+        var isUpgradeable: Bool {
+            guard let start = course?.start,
+                  let upgradeDeadline = course?.dynamicUpgradeDeadline,
+                  mode == "audit"
+            else { return false }
+            
+            let startDate = Date(iso8601: start)
+            let dynamicUpgradeDeadline = Date(iso8601: upgradeDeadline)
+            
+            return startDate.isInPast()
+            && sku?.isEmpty == false
+            && !dynamicUpgradeDeadline.isInPast()
+        }
+
         public init(
             auditAccessExpires: Date?,
             created: String?,
@@ -216,7 +239,11 @@ public extension DataLayer.PrimaryEnrollment {
             resumeTitle: primary.courseStatus?.lastVisitedUnitDisplayName,
             auditAccessExpires: primary.auditAccessExpires,
             startDisplay: primary.course?.startDisplay.flatMap { Date(iso8601: $0) },
-            startType: DisplayStartType(value: primary.course?.startType.rawValue)
+            startType: DisplayStartType(value: primary.course?.startType.rawValue),
+            isUpgradeable: primary.isUpgradeable,
+            sku: primary.sku,
+            lmsPrice: primary.lmsPrice,
+            isSelfPaced: primary.course?.isSelfPaced ?? false
         )
     }
     
