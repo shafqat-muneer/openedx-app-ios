@@ -83,7 +83,8 @@ final class UpgradeInfoViewModelTests: XCTestCase {
             handler: handler,
             pacing: Pacing.selfPace.rawValue,
             analytics: CoreAnalyticsMock(),
-            router: router ?? BaseRouterMock()
+            router: router ?? BaseRouterMock(),
+            lmsPrice: .zero
         )
     }
     
@@ -214,14 +215,15 @@ final class UpgradeInfoViewModelTests: XCTestCase {
         let _ = try prepareSuccessFlow(for: viewModel.sku, product: product)
         await viewModel.purchase()
         
-        guard let localizedPrice = product.localizedPrice else { throw UpgradeInfoViewModelTestsError.incorrectValuesReturned }
         Verify(
             helper,
             1,
             .setData(courseID: .value(viewModel.courseID),
                      pacing: .value(viewModel.pacing),
                      blockID: .value(nil),
-                     localizedCoursePrice: .value(localizedPrice),
+                     localizedPrice: .value(product.price),
+                     localizedCurrencyCode: .value(product.currencySymbol),
+                     lmsPrice: .value(.zero),
                      screen: .value(viewModel.screen)
                     )
         )
