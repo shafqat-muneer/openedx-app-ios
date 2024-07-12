@@ -158,7 +158,7 @@ public struct PrimaryCardView: View {
                 courseButton(
                     title: CoreLocalization.CourseUpgrade.Button.upgrade,
                     description: nil,
-                    icon: Image(systemName: "trophy.fill"),
+                    icon: Image(systemName: "trophy"),
                     selected: false,
                     action: upgradeAction
                 )
