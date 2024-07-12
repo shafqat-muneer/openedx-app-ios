@@ -18,7 +18,7 @@ public class DiscoveryPersistence: DiscoveryPersistenceProtocol {
         self.context = context
     }
     
-    public func loadDiscovery() throws -> [CourseItem] {
+    public func loadDiscovery() async throws -> [CourseItem] {
         let result = try? context.fetch(CDDiscoveryCourse.fetchRequest())
             .map {
                 var coursewareAccess: CoursewareAccess?
@@ -70,7 +70,7 @@ public class DiscoveryPersistence: DiscoveryPersistenceProtocol {
     
     public func saveDiscovery(items: [CourseItem]) {
         for item in items {
-            context.performAndWait {
+            context.perform {[context] in
                 let newItem = CDDiscoveryCourse(context: context)
                 context.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump
                 newItem.name = item.name
@@ -105,29 +105,31 @@ public class DiscoveryPersistence: DiscoveryPersistenceProtocol {
         }
     }
     
-    public func loadCourseDetails(courseID: String) throws -> CourseDetails {
-        let request = CDCourseDetails.fetchRequest()
-        request.predicate = NSPredicate(format: "courseID = %@", courseID)
-        guard let courseDetails = try? context.fetch(request).first else { throw NoCachedDataError() }
-        return CourseDetails(
-            courseID: courseDetails.courseID ?? "",
-            org: courseDetails.org ?? "",
-            courseTitle: courseDetails.courseTitle ?? "",
-            courseDescription: courseDetails.courseDescription ?? "",
-            courseStart: courseDetails.courseStart,
-            courseEnd: courseDetails.courseEnd,
-            enrollmentStart: courseDetails.enrollmentStart,
-            enrollmentEnd: courseDetails.enrollmentEnd,
-            isEnrolled: courseDetails.isEnrolled,
-            overviewHTML: courseDetails.overviewHTML ?? "",
-            courseBannerURL: courseDetails.courseBannerURL ?? "",
-            courseVideoURL: courseDetails.courseVideoURL,
-            courseRawImage: courseDetails.courseRawImage
-        )
+    public func loadCourseDetails(courseID: String) async throws -> CourseDetails {
+        try await context.perform {[context] in
+            let request = CDCourseDetails.fetchRequest()
+            request.predicate = NSPredicate(format: "courseID = %@", courseID)
+            guard let courseDetails = try? context.fetch(request).first else { throw NoCachedDataError() }
+            return CourseDetails(
+                courseID: courseDetails.courseID ?? "",
+                org: courseDetails.org ?? "",
+                courseTitle: courseDetails.courseTitle ?? "",
+                courseDescription: courseDetails.courseDescription ?? "",
+                courseStart: courseDetails.courseStart,
+                courseEnd: courseDetails.courseEnd,
+                enrollmentStart: courseDetails.enrollmentStart,
+                enrollmentEnd: courseDetails.enrollmentEnd,
+                isEnrolled: courseDetails.isEnrolled,
+                overviewHTML: courseDetails.overviewHTML ?? "",
+                courseBannerURL: courseDetails.courseBannerURL ?? "",
+                courseVideoURL: courseDetails.courseVideoURL,
+                courseRawImage: courseDetails.courseRawImage
+            )
+        }
     }
     
     public func saveCourseDetails(course: CourseDetails) {
-        context.performAndWait {
+        context.perform {[context] in
             let newCourseDetails = CDCourseDetails(context: self.context)
             newCourseDetails.courseID = course.courseID
             newCourseDetails.org = course.org
