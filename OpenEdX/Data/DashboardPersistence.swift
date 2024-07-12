@@ -273,7 +273,11 @@ public class DashboardPersistence: DashboardPersistenceProtocol {
                         resumeTitle: cdPrimaryCourse.resumeTitle,
                         auditAccessExpires: cdPrimaryCourse.auditAccessExpires,
                         startDisplay: cdPrimaryCourse.startDisplay,
-                        startType: DisplayStartType(value: cdPrimaryCourse.startType)
+                        startType: DisplayStartType(value: cdPrimaryCourse.startType),
+                        isUpgradeable: cdPrimaryCourse.isUpgradeable,
+                        sku: cdPrimaryCourse.sku,
+                        lmsPrice: cdPrimaryCourse.lmsPrice?.doubleValue,
+                        isSelfPaced: cdPrimaryCourse.isSelfPaced
                     )
                 }
                 
