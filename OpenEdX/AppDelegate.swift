@@ -12,6 +12,9 @@ import Profile
 import GoogleSignIn
 import FacebookCore
 import MSAL
+import UserNotifications
+import FirebaseCore
+import FirebaseMessaging
 import Theme
 
 @UIApplicationMain
@@ -32,6 +35,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
         initDI()
+        
         if let config = Container.shared.resolve(ConfigProtocol.self) {
             Theme.Shapes.isRoundedCorners = config.theme.isRoundedCorners
             
@@ -42,14 +46,27 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 )
             }
             configureDeepLinkServices(launchOptions: launchOptions)
-        
+            
             // IAP enabled is server configureable and fetched in enrollments API
             // IAP config isn't available on app launch so that's why checking for
             // e-commerce URL, e-commerce URL is being used for IAP
             if let storekitHandler = Container.shared.resolve(StoreKitHandlerProtocol.self),
                config.ecommerceURL?.isEmpty == false {
-                
                 storekitHandler.completeTransactions()
+            }
+            
+            let pushManager = Container.shared.resolve(PushNotificationsManager.self)
+            
+            if config.firebase.enabled {
+                FirebaseApp.configure()
+                if config.firebase.cloudMessagingEnabled {
+                    Messaging.messaging().delegate = pushManager
+                    UNUserNotificationCenter.current().delegate = pushManager
+                }
+            }
+            
+            if pushManager?.hasProviders == true {
+                UIApplication.shared.registerForRemoteNotifications()
             }
         }
         
@@ -61,15 +78,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         NotificationCenter.default.addObserver(
             self,
-            selector: #selector(forceLogoutUser),
-            name: .onTokenRefreshFailed,
+            selector: #selector(didUserAuthorize),
+            name: .userAuthorized,
             object: nil
         )
         
-        if let pushManager = Container.shared.resolve(PushNotificationsManager.self) {
-            pushManager.performRegistration()
-        }
-
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(didUserLogout),
+            name: .userLoggedOut,
+            object: nil
+        )
+        
         return true
     }
 
@@ -129,21 +149,31 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         )
     }
     
-    @objc private func forceLogoutUser() {
+    @objc private func didUserAuthorize() {
+        Container.shared.resolve(PushNotificationsManager.self)?.synchronizeToken()
+    }
+    
+    @objc func didUserLogout(_ notification: Notification) {
         guard Date().timeIntervalSince1970 - lastForceLogoutTime > 5 else {
             return
         }
-        let analyticsManager = Container.shared.resolve(AnalyticsManager.self)
-        analyticsManager?.userLogout(force: true)
-        
-        lastForceLogoutTime = Date().timeIntervalSince1970
-        
-        Container.shared.resolve(CoreStorage.self)?.clear()
-        Task {
-            await Container.shared.resolve(DownloadManagerProtocol.self)?.deleteAllFiles()
+        if let userInfo = notification.userInfo,
+           userInfo[Notification.UserInfoKey.isForced] as? Bool == true {
+            let analyticsManager = Container.shared.resolve(AnalyticsManager.self)
+            analyticsManager?.userLogout(force: true)
+            
+            lastForceLogoutTime = Date().timeIntervalSince1970
+            
+            Container.shared.resolve(CoreStorage.self)?.clear()
+            Task {
+                await Container.shared.resolve(DownloadManagerProtocol.self)?.deleteAllFiles()
+            }
+            Container.shared.resolve(CoreDataHandlerProtocol.self)?.clear()
+            window?.rootViewController = RouteController()
         }
-        Container.shared.resolve(CoreDataHandlerProtocol.self)?.clear()
-        window?.rootViewController = RouteController()
+        
+        UNUserNotificationCenter.current().removeAllDeliveredNotifications()
+        Container.shared.resolve(PushNotificationsManager.self)?.refreshToken()
     }
     
     // Push Notifications
@@ -160,8 +190,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         didReceiveRemoteNotification userInfo: [AnyHashable: Any],
         fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void
     ) {
-        guard let pushManager = Container.shared.resolve(PushNotificationsManager.self)
-        else {
+        guard let pushManager = Container.shared.resolve(PushNotificationsManager.self) else {
             completionHandler(.newData)
             return
         }
