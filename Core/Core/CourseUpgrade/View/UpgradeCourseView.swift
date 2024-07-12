@@ -11,8 +11,22 @@ import Swinject
 public enum CourseAccessErrorHelperType {
     case isEndDateOld(date: Date)
     case startDateError(date: Date?)
-    case auditExpired(date: Date?, sku: String, courseID: String, pacing: String, screen: CourseUpgradeScreen, lmsPrice: Double)
-    case upgradeable(date: Date?, sku: String, courseID: String, pacing: String, screen: CourseUpgradeScreen, lmsPrice: Double)
+    case auditExpired(
+        date: Date?,
+        sku: String,
+        courseID: String,
+        pacing: String,
+        screen: CourseUpgradeScreen,
+        lmsPrice: Double
+    )
+    case upgradeable(
+        date: Date?,
+        sku: String,
+        courseID: String,
+        pacing: String,
+        screen: CourseUpgradeScreen,
+        lmsPrice: Double
+    )
 }
 
 public struct UpgradeCourseView: View {
