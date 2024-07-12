@@ -29,6 +29,8 @@ public struct PrimaryCardView: View {
     private var assignmentAction: (String?) -> Void
     private var openCourseAction: () -> Void
     private var resumeAction: () -> Void
+    private var upgradeAction: () -> Void
+    private var isUpgradeable: Bool
     
     public init(
         courseName: String,
@@ -47,7 +49,9 @@ public struct PrimaryCardView: View {
         startType: DisplayStartType?,
         assignmentAction: @escaping (String?) -> Void,
         openCourseAction: @escaping () -> Void,
-        resumeAction: @escaping () -> Void
+        resumeAction: @escaping () -> Void,
+        isUpgradeable: Bool,
+        upgradeAction: @escaping () -> Void
     ) {
         self.courseName = courseName
         self.org = org
@@ -66,6 +70,8 @@ public struct PrimaryCardView: View {
         self.auditAccessExpires = auditAccessExpires
         self.startDisplay = startDisplay
         self.startType = startType
+        self.isUpgradeable = isUpgradeable
+        self.upgradeAction = upgradeAction
     }
     
     public var body: some View {
@@ -145,6 +151,17 @@ public struct PrimaryCardView: View {
                         )
                     }
                 }
+            }
+            
+            // Upgrade button
+            if isUpgradeable {
+                courseButton(
+                    title: CoreLocalization.CourseUpgrade.Button.upgrade,
+                    description: nil,
+                    icon: Image(systemName: "trophy"),
+                    selected: false,
+                    action: upgradeAction
+                )
             }
             
             // ResumeButton
@@ -282,7 +299,9 @@ struct PrimaryCardView_Previews: PreviewProvider {
                 startType: .unknown,
                 assignmentAction: {_ in },
                 openCourseAction: {},
-                resumeAction: {}
+                resumeAction: {},
+                isUpgradeable: false,
+                upgradeAction: {}
             )
             .loadFonts()
         }

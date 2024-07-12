@@ -49,7 +49,10 @@ public struct PrimaryCourse: Hashable {
     public let auditAccessExpires: Date?
     public let startDisplay: Date?
     public let startType: DisplayStartType?
-    
+    public let isUpgradeable: Bool
+    public let sku: String?
+    public let lmsPrice: Double?
+    public let isSelfPaced: Bool
     public init(
         name: String,
         org: String,
@@ -66,7 +69,11 @@ public struct PrimaryCourse: Hashable {
         resumeTitle: String?,
         auditAccessExpires: Date?,
         startDisplay: Date?,
-        startType: DisplayStartType?
+        startType: DisplayStartType?,
+        isUpgradeable: Bool,
+        sku: String?,
+        lmsPrice: Double?,
+        isSelfPaced: Bool
     ) {
         self.name = name
         self.org = org
@@ -84,6 +91,10 @@ public struct PrimaryCourse: Hashable {
         self.auditAccessExpires = auditAccessExpires
         self.startDisplay = startDisplay
         self.startType = startType
+        self.isUpgradeable = isUpgradeable
+        self.sku = sku
+        self.lmsPrice = lmsPrice
+        self.isSelfPaced = isSelfPaced
     }
 }
 

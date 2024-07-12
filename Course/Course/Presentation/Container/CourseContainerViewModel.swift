@@ -328,7 +328,8 @@ public class CourseContainerViewModel: BaseCourseViewModel {
                     sku: courseStructure.sku ?? "",
                     courseID: courseID,
                     pacing: courseStructure.isSelfPaced ? Pacing.selfPace.rawValue : Pacing.instructor.rawValue,
-                    screen: .courseDashboard
+                    screen: .courseDashboard,
+                    lmsPrice: courseStructure.lmsPrice ?? .zero
                 )
             } else {
                 return .isEndDateOld(date: courseEnd)
@@ -351,7 +352,8 @@ public class CourseContainerViewModel: BaseCourseViewModel {
                     sku: courseStructure.sku ?? "",
                     courseID: courseID,
                     pacing: courseStructure.isSelfPaced ? Pacing.selfPace.rawValue : Pacing.instructor.rawValue,
-                    screen: .courseDashboard
+                    screen: .courseDashboard,
+                    lmsPrice: courseStructure.lmsPrice ?? .zero
                 )
             
             default:

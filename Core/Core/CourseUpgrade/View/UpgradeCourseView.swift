@@ -11,8 +11,22 @@ import Swinject
 public enum CourseAccessErrorHelperType {
     case isEndDateOld(date: Date)
     case startDateError(date: Date?)
-    case auditExpired(date: Date?, sku: String, courseID: String, pacing: String, screen: CourseUpgradeScreen)
-    case upgradeable(date: Date?, sku: String, courseID: String, pacing: String, screen: CourseUpgradeScreen)
+    case auditExpired(
+        date: Date?,
+        sku: String,
+        courseID: String,
+        pacing: String,
+        screen: CourseUpgradeScreen,
+        lmsPrice: Double
+    )
+    case upgradeable(
+        date: Date?,
+        sku: String,
+        courseID: String,
+        pacing: String,
+        screen: CourseUpgradeScreen,
+        lmsPrice: Double
+    )
 }
 
 public struct UpgradeCourseView: View {
@@ -45,8 +59,8 @@ public struct UpgradeCourseView: View {
 
     public var body: some View {
         switch type {
-        case let .upgradeable(date, sku, courseID, pacing, screen),
-            let .auditExpired(date, sku, courseID, pacing, screen):
+        case let .upgradeable(date, sku, courseID, pacing, screen, lmsPrice),
+            let .auditExpired(date, sku, courseID, pacing, screen, lmsPrice):
             VStack {
                 let message = CoreLocalization.CourseUpgrade.View.auditMessage
                     .replacingOccurrences(
@@ -57,7 +71,7 @@ public struct UpgradeCourseView: View {
                     isFindCourseButtonVisible: true,
                     viewModel: Container.shared.resolve(
                         UpgradeInfoViewModel.self,
-                        arguments: "", message, sku, courseID, screen, pacing
+                        arguments: "", message, sku, courseID, screen, pacing, lmsPrice
                     )!,
                     findAction: {
                         findAction?()
@@ -126,7 +140,8 @@ public struct UpgradeCourseView: View {
                 sku: "some sku",
                 courseID: "courseID",
                 pacing: "pacing",
-                screen: .unknown
+                screen: .unknown,
+                lmsPrice: .zero
             ),
             coordinate: .constant(0),
             collapsed: .constant(false),
@@ -141,7 +156,8 @@ public struct UpgradeCourseView: View {
                 sku: "some sku",
                 courseID: "courseID",
                 pacing: "pacing",
-                screen: .unknown
+                screen: .unknown,
+                lmsPrice: .zero
             ),
             coordinate: .constant(0),
             collapsed: .constant(false),
