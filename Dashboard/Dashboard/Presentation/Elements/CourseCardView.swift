@@ -63,6 +63,9 @@ struct CourseCardView: View {
                 }
                 courseTitle
             }
+            
+            // Commenting this for MVP, LEARNER-10102
+            /*
             if !hasAccess {
                 ZStack(alignment: .center) {
                     Circle()
@@ -74,7 +77,9 @@ struct CourseCardView: View {
                 }
                 .padding(8)
             }
+            */
         }
+             
         .background(Theme.Colors.courseCardBackground)
         .cornerRadius(8)
         .shadow(color: Theme.Colors.courseCardShadow, radius: 6, x: 2, y: 2)
