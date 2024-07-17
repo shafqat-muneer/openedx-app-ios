@@ -40,7 +40,7 @@ public extension UIApplication {
               let window = windowScene.windows.first else {
             return .zero
         }
-
+        
         return window.safeAreaInsets
     }
 }
