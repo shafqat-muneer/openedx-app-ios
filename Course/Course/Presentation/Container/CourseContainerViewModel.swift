@@ -198,6 +198,15 @@ public class CourseContainerViewModel: BaseCourseViewModel {
             }
         }
     }
+
+    @MainActor
+    func getCourseStructure(courseID: String) async throws -> CourseStructure? {
+        if isInternetAvaliable {
+            return try await interactor.getCourseBlocks(courseID: courseID)
+        } else {
+            return try await interactor.getLoadedCourseBlocks(courseID: courseID)
+        }
+    }
     
     @MainActor
     func updateMenuBarVisibility() {
@@ -217,11 +226,14 @@ public class CourseContainerViewModel: BaseCourseViewModel {
         isShowProgress = withProgress
         isShowRefresh = !withProgress
         do {
+            let courseStructure = try await getCourseStructure(courseID: courseID)
+            await setDownloadsStates(courseStructure: courseStructure)
+            self.courseStructure = courseStructure
+            let type = type(for: courseStructure?.coursewareAccessDetails?.coursewareAccess)
+            shouldShowUpgradeButton = type == nil && courseStructure?.isUpgradeable ?? false
+            updateMenuBarVisibility()
+
             if isInternetAvaliable {
-                courseStructure = try await interactor.getCourseBlocks(courseID: courseID)
-                let type = type(for: courseStructure?.coursewareAccessDetails?.coursewareAccess)
-                shouldShowUpgradeButton = type == nil && courseStructure?.isUpgradeable ?? false
-                updateMenuBarVisibility()
                 NotificationCenter.default.post(name: .getCourseDates, object: courseID)
                 isShowProgress = false
                 isShowRefresh = false
@@ -231,12 +243,8 @@ public class CourseContainerViewModel: BaseCourseViewModel {
                         courseStructure: courseStructure
                     )
                 }
-            } else {
-                courseStructure = try await interactor.getLoadedCourseBlocks(courseID: courseID)
-                shouldShowUpgradeButton = courseStructure?.isUpgradeable ?? false
             }
             courseVideosStructure = interactor.getCourseVideoBlocks(fullStructure: courseStructure!)
-            await setDownloadsStates()
             isShowProgress = false
             isShowRefresh = false
             
@@ -642,7 +650,7 @@ public class CourseContainerViewModel: BaseCourseViewModel {
     }
 
     @MainActor
-    func setDownloadsStates() async {
+    func setDownloadsStates(courseStructure: CourseStructure?) async {
         guard let course = courseStructure else { return }
         courseDownloadTasks = await manager.getDownloadTasksForCourse(course.id)
         downloadableVerticals = []
@@ -715,7 +723,7 @@ public class CourseContainerViewModel: BaseCourseViewModel {
                 if case .progress = state { return }
                 Task(priority: .background) {
                     debugLog(state, "--- state ---")
-                    await self.setDownloadsStates()
+                    await self.setDownloadsStates(courseStructure: self.courseStructure)
                 }
             }
             .store(in: &cancellables)
