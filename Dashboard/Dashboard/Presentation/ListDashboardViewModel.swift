@@ -81,14 +81,6 @@ public class ListDashboardViewModel: ObservableObject {
                     await self.getMyCourses(page: 1, refresh: true)
                 }
             }
-        refreshEnrollmentsCancellable = NotificationCenter.default
-            .publisher(for: .refreshEnrollments)
-            .sink { [weak self] _ in
-                guard let self = self else { return }
-                Task {
-                    await self.getMyCourses(page: 1, refresh: true)
-                }
-            }
     }
     
     @MainActor
