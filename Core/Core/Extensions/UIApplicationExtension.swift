@@ -45,7 +45,7 @@ public extension UIApplication {
     }
     
     var windowInsets: UIEdgeInsets {
-        guard let window = windows?.first else {
+        guard let window = window else {
             return .zero
         }
         
