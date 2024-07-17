@@ -56,8 +56,11 @@ class FCMProvider: NSObject, PushNotificationsProvider, MessagingDelegate {
     }
     
     private func sendFCMToken(_ token: String) {
+        // Commenting this for MVP, LEARNER-10102
+        /*
         Task {
             try? await api.request(NotificationsEndpoints.syncFirebaseToken(token: token))
         }
+         */
     }
 }

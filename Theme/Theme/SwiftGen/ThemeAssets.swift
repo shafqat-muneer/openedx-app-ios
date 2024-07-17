@@ -35,6 +35,7 @@ public enum ThemeAssets {
   public static let cardViewStroke = ColorAsset(name: "CardViewStroke")
   public static let certificateForeground = ColorAsset(name: "CertificateForeground")
   public static let commentCellBackground = ColorAsset(name: "CommentCellBackground")
+  public static let courseCardBackground = ColorAsset(name: "CourseCardBackground")
   public static let courseCardShadow = ColorAsset(name: "CourseCardShadow")
   public static let datesSectionBackground = ColorAsset(name: "DatesSectionBackground")
   public static let datesSectionStroke = ColorAsset(name: "DatesSectionStroke")
@@ -54,6 +55,7 @@ public enum ThemeAssets {
   public static let progressDone = ColorAsset(name: "ProgressDone")
   public static let progressSkip = ColorAsset(name: "ProgressSkip")
   public static let selectedAndDone = ColorAsset(name: "SelectedAndDone")
+  public static let secondaryButtonBGColor = ColorAsset(name: "SecondaryButtonBGColor")
   public static let secondaryButtonBorderColor = ColorAsset(name: "SecondaryButtonBorderColor")
   public static let secondaryButtonTextColor = ColorAsset(name: "SecondaryButtonTextColor")
   public static let shadowColor = ColorAsset(name: "ShadowColor")
@@ -82,6 +84,7 @@ public enum ThemeAssets {
   public static let warningText = ColorAsset(name: "warningText")
   public static let white = ColorAsset(name: "white")
   public static let appLogo = ImageAsset(name: "appLogo")
+  public static let campaignLaunch = ImageAsset(name: "campaign_launch")
   public static let headerBackground = ImageAsset(name: "headerBackground")
 }
 // swiftlint:enable identifier_name line_length nesting type_body_length type_name

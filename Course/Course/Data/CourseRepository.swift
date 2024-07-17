@@ -127,6 +127,32 @@ public class CourseRepository: CourseRepositoryProtocol {
             childs.append(chapter)
         }
         
+        var coursewareAccessDetails: CoursewareAccessDetails?
+        if let details = course.coursewareAccessDetails {
+            var coursewareAccess: CoursewareAccess?
+            if let access = details.coursewareAccess {
+                var error: CourseAccessError?
+                if let errorCode = access.errorCode {
+                    error = CourseAccessError(rawValue: errorCode.rawValue) ?? .unknown
+                }
+                
+                coursewareAccess = CoursewareAccess(
+                    hasAccess: access.hasAccess,
+                    errorCode: error,
+                    developerMessage: access.developerMessage,
+                    userMessage: access.userMessage,
+                    additionalContextUserMessage: access.additionalContextUserMessage,
+                    userFragment: access.userFragment
+                )
+            }
+            coursewareAccessDetails = CoursewareAccessDetails(
+                hasUNMETPrerequisites: details.hasUNMETPrerequisites,
+                isTooEarly: details.isTooEarly,
+                auditAccessExpires: details.auditAccessExpires,
+                coursewareAccess: coursewareAccess
+            )
+        }
+        
         return CourseStructure(
             id: course.id,
             graded: courseBlock.graded,
@@ -140,10 +166,14 @@ public class CourseRepository: CourseRepositoryProtocol {
             certificate: course.certificate?.domain,
             org: course.org ?? "",
             isSelfPaced: course.isSelfPaced,
+            isUpgradeable: course.isUpgradeable,
+            sku: course.courseSKU,
+            coursewareAccessDetails: coursewareAccessDetails,
             courseProgress: course.courseProgress == nil ? nil : CourseProgress(
                 totalAssignmentsCount: course.courseProgress?.totalAssignmentsCount ?? 0,
                 assignmentsCompleted: course.courseProgress?.assignmentsCompleted ?? 0
-            )
+            ),
+            lmsPrice: course.lmsPrice
         )
     }
     
@@ -349,6 +379,32 @@ And there are various ways of describing it-- call it oral poetry or
             childs.append(chapter)
         }
         
+        var coursewareAccessDetails: CoursewareAccessDetails?
+        if let details = course.coursewareAccessDetails {
+            var coursewareAccess: CoursewareAccess?
+            if let access = details.coursewareAccess {
+                var error: CourseAccessError?
+                if let errorCode = access.errorCode {
+                    error = CourseAccessError(rawValue: errorCode.rawValue) ?? .unknown
+                }
+                
+                coursewareAccess = CoursewareAccess(
+                    hasAccess: access.hasAccess,
+                    errorCode: error,
+                    developerMessage: access.developerMessage,
+                    userMessage: access.userMessage,
+                    additionalContextUserMessage: access.additionalContextUserMessage,
+                    userFragment: access.userFragment
+                )
+            }
+            coursewareAccessDetails = CoursewareAccessDetails(
+                hasUNMETPrerequisites: details.hasUNMETPrerequisites,
+                isTooEarly: details.isTooEarly,
+                auditAccessExpires: details.auditAccessExpires,
+                coursewareAccess: coursewareAccess
+            )
+        }
+        
         return CourseStructure(
             id: course.id,
             graded: courseBlock.graded,
@@ -361,11 +417,15 @@ And there are various ways of describing it-- call it oral poetry or
             media: course.media,
             certificate: course.certificate?.domain,
             org: course.org ?? "",
-            isSelfPaced: course.isSelfPaced, 
+            isSelfPaced: course.isSelfPaced,
+            isUpgradeable: course.isUpgradeable,
+            sku: course.courseSKU,
+            coursewareAccessDetails: coursewareAccessDetails,
             courseProgress: course.courseProgress == nil ? nil : CourseProgress(
                 totalAssignmentsCount: course.courseProgress?.totalAssignmentsCount ?? 0,
                 assignmentsCompleted: course.courseProgress?.assignmentsCompleted ?? 0
-            )
+            ),
+            lmsPrice: course.lmsPrice
         )
     }
     

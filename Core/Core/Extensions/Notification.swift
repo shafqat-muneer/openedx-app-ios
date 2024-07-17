@@ -20,6 +20,8 @@ public extension Notification.Name {
     static let onBlockCompletion = Notification.Name("onBlockCompletion")
     static let shiftCourseDates = Notification.Name("shiftCourseDates")
     static let profileUpdated = Notification.Name("profileUpdated")
+    static let unfullfilledTransctionsNotification = Notification.Name("unfullfilledTransctionsNotification")
+    static let courseUpgradeCompletionNotification = Notification.Name("CourseUpgradeCompletionNotification")
     static let getCourseDates = Notification.Name("getCourseDates")
     static let refreshEnrollments = Notification.Name("refreshEnrollments")
 }

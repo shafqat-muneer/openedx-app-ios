@@ -8,6 +8,19 @@
 import SwiftUI
 import Theme
 
+public struct AlertViewButton: Identifiable, Equatable {
+    public var id: String {
+        title
+    }
+    
+    public var title: String
+    public var block: () -> Void
+    
+    public static func == (lhs: AlertViewButton, rhs: AlertViewButton) -> Bool {
+        lhs.title == rhs.title
+    }
+}
+
 public enum AlertViewType: Equatable {
     case `default`(positiveAction: String, image: SwiftUI.Image?)
     case action(String, SwiftUI.Image)
@@ -19,10 +32,12 @@ public enum AlertViewType: Equatable {
     case removeCalendar
     case updateCalendar
     case calendarAdded
+    // after the MVP, the custom alerts will be used so keeping this
+    case paymentError(buttons: [AlertViewButton])
 
     var contentPadding: CGFloat {
         switch self {
-        case .`default`, .calendarAdded:
+        case .`default`, .calendarAdded, .paymentError:
             return 16
         case .action, .logOut, .leaveProfile, .deleteVideo, .deepLink, .addCalendar, .removeCalendar, .updateCalendar:
             return 36
@@ -109,15 +124,8 @@ public struct AlertView: View {
                 .fixedSize(horizontal: false, vertical: false)
         )
         .overlay(
-            RoundedRectangle(cornerRadius: 12)
-                .stroke(
-                    style: .init(
-                        lineWidth: 1,
-                        lineCap: .round,
-                        lineJoin: .round,
-                        miterLimit: 1
-                    )
-                )
+            Theme.Shapes.buttonShape
+                .stroke(lineWidth: 1)
                 .foregroundColor(Theme.Colors.backgroundStroke)
                 .fixedSize(horizontal: false, vertical: false)
         )
@@ -256,7 +264,7 @@ public struct AlertView: View {
                                 .frame(maxWidth: 215)
                         }
                         UnitButtonView(type: .custom(action),
-                                       bgColor: .clear,
+                                       bgColor: Theme.Colors.secondaryButtonBGColor,
                                        action: { okTapped() })
                         .frame(maxWidth: 215)
 
@@ -401,6 +409,16 @@ public struct AlertView: View {
                 .padding(.leading, 10)
                 .padding(.trailing, 10)
                 .padding(.bottom, 10)
+            case .paymentError(let actions):
+                VStack {
+                    ForEach(actions) { action in
+                        StyledButton(action.title, action: action.block)
+                            .frame(maxWidth: 135)
+                    }
+                }
+                .padding(.leading, 10)
+                .padding(.trailing, 10)
+                .padding(.bottom, 10)
             }
         }
         .padding(.top, 16)
@@ -417,7 +435,7 @@ public struct AlertView: View {
             } label: {
                 ZStack {
                     Text(primaryButtonTitle)
-                        .foregroundColor(Theme.Colors.primaryButtonTextColor)
+                        .foregroundColor(Theme.Colors.styledButtonText)
                         .font(Theme.Fonts.labelLarge)
                         .frame(maxWidth: .infinity)
                         .padding(.horizontal, 16)
@@ -426,7 +444,7 @@ public struct AlertView: View {
             }
             .background(
                 Theme.Shapes.buttonShape
-                    .fill(Theme.Colors.accentColor)
+                    .fill(Theme.Colors.accentButtonColor)
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 8)
@@ -454,7 +472,7 @@ public struct AlertView: View {
             })
             .background(
                 Theme.Shapes.buttonShape
-                    .fill(.clear)
+                    .fill(Theme.Colors.secondaryButtonBGColor)
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 8)

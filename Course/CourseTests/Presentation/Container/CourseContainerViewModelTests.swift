@@ -103,7 +103,11 @@ final class CourseContainerViewModelTests: XCTestCase {
             certificate: nil,
             org: "",
             isSelfPaced: true,
-            courseProgress: nil
+            isUpgradeable: false,
+            sku: nil, 
+            coursewareAccessDetails: nil,
+            courseProgress: nil,
+            lmsPrice: .zero
         )
         
         let resumeBlock = ResumeBlock(blockID: "123")
@@ -172,7 +176,11 @@ final class CourseContainerViewModelTests: XCTestCase {
             certificate: nil,
             org: "",
             isSelfPaced: true,
-            courseProgress: nil
+            isUpgradeable: false,
+            sku: nil,
+            coursewareAccessDetails: nil,
+            courseProgress: nil,
+            lmsPrice: .zero
         )
         
         Given(interactor, .getLoadedCourseBlocks(courseID: .any, willReturn: courseStructure))
@@ -437,8 +445,12 @@ final class CourseContainerViewModelTests: XCTestCase {
             )),
             certificate: nil,
             org: "",
-            isSelfPaced: true, 
-            courseProgress: nil
+            isSelfPaced: true,
+            isUpgradeable: false,
+            sku: nil,
+            coursewareAccessDetails: nil,
+            courseProgress: nil,
+            lmsPrice: .zero
         )
 
         let downloadData = DownloadDataTask(
@@ -579,7 +591,11 @@ final class CourseContainerViewModelTests: XCTestCase {
             certificate: nil,
             org: "",
             isSelfPaced: true,
-            courseProgress: nil
+            isUpgradeable: false,
+            sku: nil,
+            coursewareAccessDetails: nil,
+            courseProgress: nil,
+            lmsPrice: .zero
         )
 
         Given(connectivity, .isInternetAvaliable(getter: true))
@@ -705,7 +721,11 @@ final class CourseContainerViewModelTests: XCTestCase {
             certificate: nil,
             org: "",
             isSelfPaced: true,
-            courseProgress: nil
+            isUpgradeable: false,
+            sku: nil,
+            coursewareAccessDetails: nil,
+            courseProgress: nil,
+            lmsPrice: .zero
         )
 
         Given(connectivity, .isInternetAvaliable(getter: true))
@@ -832,7 +852,11 @@ final class CourseContainerViewModelTests: XCTestCase {
             certificate: nil,
             org: "",
             isSelfPaced: true,
-            courseProgress: nil
+            isUpgradeable: false,
+            sku: nil,
+            coursewareAccessDetails: nil,
+            courseProgress: nil,
+            lmsPrice: .zero
         )
 
         Given(connectivity, .isInternetAvaliable(getter: true))
@@ -952,7 +976,11 @@ final class CourseContainerViewModelTests: XCTestCase {
             certificate: nil,
             org: "",
             isSelfPaced: true,
-            courseProgress: nil
+            isUpgradeable: false,
+            sku: nil,
+            coursewareAccessDetails: nil,
+            courseProgress: nil,
+            lmsPrice: .zero
         )
 
         let downloadData = DownloadDataTask(
@@ -1087,7 +1115,11 @@ final class CourseContainerViewModelTests: XCTestCase {
             certificate: nil,
             org: "",
             isSelfPaced: true,
-            courseProgress: nil
+            isUpgradeable: false,
+            sku: nil,
+            coursewareAccessDetails: nil,
+            courseProgress: nil,
+            lmsPrice: .zero
         )
 
         let downloadData = DownloadDataTask(
@@ -1243,7 +1275,11 @@ final class CourseContainerViewModelTests: XCTestCase {
             certificate: nil,
             org: "",
             isSelfPaced: true,
-            courseProgress: nil
+            isUpgradeable: false,
+            sku: nil,
+            coursewareAccessDetails: nil,
+            courseProgress: nil,
+            lmsPrice: .zero
         )
 
         let downloadData = DownloadDataTask(

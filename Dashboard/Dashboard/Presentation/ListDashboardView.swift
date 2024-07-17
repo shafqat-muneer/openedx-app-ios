@@ -61,7 +61,21 @@ public struct ListDashboardView: View {
                                             model: course,
                                             type: .dashboard,
                                             index: index,
-                                            cellsCount: viewModel.courses.count
+                                            cellsCount: viewModel.courses.count,
+                                            upgradeAction: {
+                                                Task {@MainActor in
+                                                    await self.router.showUpgradeInfo(
+                                                        productName: course.name,
+                                                        message: "",
+                                                        sku: course.sku,
+                                                        courseID: course.courseID,
+                                                        screen: .dashboard,
+                                                        pacing: course.isSelfPaced != false ? Pacing.selfPace.rawValue
+                                                        : Pacing.instructor.rawValue,
+                                                        lmsPrice: course.lmsPrice ?? .zero
+                                                    )
+                                                }
+                                            }
                                         )
                                         .padding(.horizontal, 20)
                                         .listRowBackground(Color.clear)
@@ -83,6 +97,9 @@ public struct ListDashboardView: View {
                                                 enrollmentStart: course.enrollmentStart,
                                                 enrollmentEnd: course.enrollmentEnd,
                                                 title: course.name,
+                                                org: course.org,
+                                                courseRawImage: course.courseRawImage,
+                                                coursewareAccess: course.coursewareAccess,
                                                 showDates: false,
                                                 lastVisitedBlockID: nil
                                             )
@@ -90,7 +107,7 @@ public struct ListDashboardView: View {
                                         .accessibilityIdentifier("course_item")
                                     }
                                     // MARK: - ProgressBar
-                                    if viewModel.nextPage <= viewModel.totalPages {
+                                    if viewModel.nextPage <= viewModel.totalPages || viewModel.showLoader {
                                         VStack(alignment: .center) {
                                             ProgressBar(size: 40, lineWidth: 8)
                                                 .padding(.top, 20)
@@ -141,6 +158,7 @@ public struct ListDashboardView: View {
             .onFirstAppear {
                 Task {
                     await viewModel.getMyCourses(page: 1)
+                    await viewModel.resolveUnfinishedPayment()
                 }
             }
             .background(
@@ -148,6 +166,7 @@ public struct ListDashboardView: View {
                     .ignoresSafeArea()
             )
         }
+        .paymentSnackbar()
     }
 }
 
@@ -157,7 +176,9 @@ struct ListDashboardView_Previews: PreviewProvider {
         let vm = ListDashboardViewModel(
             interactor: DashboardInteractor.mock,
             connectivity: Connectivity(),
-            analytics: DashboardAnalyticsMock()
+            analytics: DashboardAnalyticsMock(),
+            upgradehandler: CourseUpgradeHandlerProtocolMock(),
+            coreAnalytics: CoreAnalyticsMock()
         )
         let router = DashboardRouterMock()
         

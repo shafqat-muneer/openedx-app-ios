@@ -56,10 +56,14 @@ public class CourseInteractor: CourseInteractorProtocol {
             certificate: course.certificate,
             org: course.org,
             isSelfPaced: course.isSelfPaced,
+            isUpgradeable: course.isUpgradeable,
+            sku: course.sku,
+            coursewareAccessDetails: course.coursewareAccessDetails,
             courseProgress: course.courseProgress == nil ? nil : CourseProgress(
                 totalAssignmentsCount: course.courseProgress?.totalAssignmentsCount ?? 0,
                 assignmentsCompleted: course.courseProgress?.assignmentsCompleted ?? 0
-            )
+            ),
+            lmsPrice: course.lmsPrice
         )
     }
     

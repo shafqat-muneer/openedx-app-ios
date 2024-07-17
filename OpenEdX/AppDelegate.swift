@@ -47,6 +47,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
             configureDeepLinkServices(launchOptions: launchOptions)
             
+            // IAP enabled is server configureable and fetched in enrollments API
+            // IAP config isn't available on app launch so that's why checking for
+            // e-commerce URL, e-commerce URL is being used for IAP
+            if let storekitHandler = Container.shared.resolve(StoreKitHandlerProtocol.self),
+               config.ecommerceURL?.isEmpty == false {
+                storekitHandler.completeTransactions()
+            }
+            
             let pushManager = Container.shared.resolve(PushNotificationsManager.self)
             
             if config.firebase.enabled {
@@ -61,13 +69,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 UIApplication.shared.registerForRemoteNotifications()
             }
         }
-
+        
         Theme.Fonts.registerFonts()
         window = UIWindow(frame: UIScreen.main.bounds)
         window?.rootViewController = RouteController()
         window?.makeKeyAndVisible()
         window?.tintColor = Theme.UIColors.accentColor
-          
+        
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(didUserAuthorize),
@@ -81,7 +89,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             name: .userLoggedOut,
             object: nil
         )
-
+        
         return true
     }
 

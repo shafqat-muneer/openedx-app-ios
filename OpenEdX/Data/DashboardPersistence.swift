@@ -21,7 +21,25 @@ public class DashboardPersistence: DashboardPersistenceProtocol {
     public func loadEnrollments() async throws -> [CourseItem] {
         try await context.perform {[context] in
             let result = try? context.fetch(CDDashboardCourse.fetchRequest())
-                .map { CourseItem(name: $0.name ?? "",
+                .map {
+                    var coursewareAccess: CoursewareAccess?
+                    if let access = $0.coursewareAccess {
+                        var coursewareError: CourseAccessError?
+                        if let error = access.errorCode {
+                            coursewareError = CourseAccessError(rawValue: error) ?? .unknown
+                        }
+                        
+                        coursewareAccess = CoursewareAccess(
+                            hasAccess: access.hasAccess,
+                            errorCode: coursewareError,
+                            developerMessage: access.developerMessage,
+                            userMessage: access.userMessage,
+                            additionalContextUserMessage: access.additionalContextUserMessage,
+                            userFragment: access.userFragment
+                        )
+                    }
+                    
+                    return CourseItem(name: $0.name ?? "",
                                   org: $0.org ?? "",
                                   shortDescription: $0.desc ?? "",
                                   imageURL: $0.imageURL ?? "",
@@ -33,8 +51,20 @@ public class DashboardPersistence: DashboardPersistenceProtocol {
                                   courseID: $0.courseID ?? "",
                                   numPages: Int($0.numPages),
                                   coursesCount: Int($0.courseCount),
+                                  sku: $0.courseSku ?? "",
+                                  dynamicUpgradeDeadline: $0.dynamicUpgradeDeadline,
+                                  mode: DataLayer.Mode(rawValue: $0.mode ?? "") ?? .unknown,
+                                  isSelfPaced: $0.isSelfPaced,
+                                  courseRawImage: $0.courseRawImage,
+                                  coursewareAccess: coursewareAccess,
                                   progressEarned: 0,
-                                  progressPossible: 0)}
+                                  progressPossible: 0,
+                                  auditAccessExpires: $0.auditAccessExpires,
+                                  startDisplay: $0.startDisplay,
+                                  startType: DisplayStartType(value: $0.startType),
+                                  lmsPrice: $0.lmsPrice
+                )
+                }
             if let result, !result.isEmpty {
                 return result
             } else {
@@ -59,7 +89,23 @@ public class DashboardPersistence: DashboardPersistenceProtocol {
                 newItem.enrollmentEnd = item.enrollmentEnd
                 newItem.numPages = Int32(item.numPages)
                 newItem.courseID = item.courseID
+                newItem.courseSku = item.sku
+                newItem.dynamicUpgradeDeadline = item.dynamicUpgradeDeadline
+                newItem.mode = item.mode.rawValue
+                newItem.courseRawImage = item.courseRawImage
+                newItem.lmsPrice = item.lmsPrice ?? .zero
                 
+                if let access = item.coursewareAccess {
+                    let newAccess = CDDashboardCoursewareAccess(context: self.context)
+                    newAccess.hasAccess = access.hasAccess
+                    newAccess.errorCode = access.errorCode?.rawValue
+                    newAccess.developerMessage = access.developerMessage
+                    newAccess.userMessage = access.userMessage
+                    newAccess.additionalContextUserMessage = access.additionalContextUserMessage
+                    newAccess.userFragment = access.userFragment
+                    newItem.coursewareAccess = newAccess
+                }
+                newItem.isSelfPaced = item.isSelfPaced ?? false
                 do {
                     try context.save()
                 } catch {
@@ -68,13 +114,125 @@ public class DashboardPersistence: DashboardPersistenceProtocol {
             }
         }
     }
-
+    
+    // swiftlint:disable function_body_length
+    public func loadPrimaryEnrollment() throws -> PrimaryEnrollment {
+        let request = CDMyEnrollments.fetchRequest()
+        if let result = try context.fetch(request).first {
+            let primaryCourse = result.primaryCourse.flatMap { cdPrimaryCourse -> PrimaryCourse? in
+                
+                let futureAssignments = (cdPrimaryCourse.futureAssignments as? Set<CDAssignment> ?? [])
+                    .map { future in
+                        return Assignment(
+                            type: future.type ?? "",
+                            title: future.title ?? "",
+                            description: future.descript ?? "",
+                            date: future.date ?? Date(),
+                            complete: future.complete,
+                            firstComponentBlockId: future.firstComponentBlockId
+                        )
+                    }
+                
+                let pastAssignments = (cdPrimaryCourse.pastAssignments as? Set<CDAssignment> ?? [])
+                    .map { past in
+                        return Assignment(
+                            type: past.type ?? "",
+                            title: past.title ?? "",
+                            description: past.descript ?? "",
+                            date: past.date ?? Date(),
+                            complete: past.complete,
+                            firstComponentBlockId: past.firstComponentBlockId
+                        )
+                    }
+                
+                return PrimaryCourse(
+                    name: cdPrimaryCourse.name ?? "",
+                    org: cdPrimaryCourse.org ?? "",
+                    courseID: cdPrimaryCourse.courseID ?? "",
+                    hasAccess: cdPrimaryCourse.hasAccess,
+                    courseStart: cdPrimaryCourse.courseStart,
+                    courseEnd: cdPrimaryCourse.courseEnd,
+                    courseBanner: cdPrimaryCourse.courseBanner ?? "",
+                    futureAssignments: futureAssignments,
+                    pastAssignments: pastAssignments,
+                    progressEarned: Int(cdPrimaryCourse.progressEarned),
+                    progressPossible: Int(cdPrimaryCourse.progressPossible),
+                    lastVisitedBlockID: cdPrimaryCourse.lastVisitedBlockID ?? "",
+                    resumeTitle: cdPrimaryCourse.resumeTitle,
+                    auditAccessExpires: cdPrimaryCourse.auditAccessExpires,
+                    startDisplay: cdPrimaryCourse.startDisplay,
+                    startType: DisplayStartType(value: cdPrimaryCourse.startType),
+                    isUpgradeable: cdPrimaryCourse.isUpgradeable,
+                    sku: cdPrimaryCourse.sku,
+                    lmsPrice: cdPrimaryCourse.lmsPrice?.doubleValue,
+                    isSelfPaced: cdPrimaryCourse.isSelfPaced
+                )
+            }
+            
+            let courses = (result.courses as? Set<CDDashboardCourse> ?? [])
+                .map { cdCourse in
+                    var coursewareAccess: CoursewareAccess?
+                    if let access = cdCourse.coursewareAccess {
+                        var coursewareError: CourseAccessError?
+                        if let error = access.errorCode {
+                            coursewareError = CourseAccessError(rawValue: error) ?? .unknown
+                        }
+                        
+                        coursewareAccess = CoursewareAccess(
+                            hasAccess: access.hasAccess,
+                            errorCode: coursewareError,
+                            developerMessage: access.developerMessage,
+                            userMessage: access.userMessage,
+                            additionalContextUserMessage: access.additionalContextUserMessage,
+                            userFragment: access.userFragment
+                        )
+                    }
+                    
+                    return CourseItem(
+                        name: cdCourse.name ?? "",
+                        org: cdCourse.org ?? "",
+                        shortDescription: cdCourse.desc ?? "",
+                        imageURL: cdCourse.imageURL ?? "",
+                        hasAccess: cdCourse.hasAccess,
+                        courseStart: cdCourse.courseStart,
+                        courseEnd: cdCourse.courseEnd,
+                        enrollmentStart: cdCourse.enrollmentStart,
+                        enrollmentEnd: cdCourse.enrollmentEnd,
+                        courseID: cdCourse.courseID ?? "",
+                        numPages: Int(cdCourse.numPages),
+                        coursesCount: Int(cdCourse.courseCount),
+                        sku: cdCourse.courseSku ?? "",
+                        dynamicUpgradeDeadline: cdCourse.dynamicUpgradeDeadline,
+                        mode: DataLayer.Mode(rawValue: cdCourse.mode ?? "") ?? .unknown,
+                        isSelfPaced: cdCourse.isSelfPaced,
+                        courseRawImage: cdCourse.courseRawImage,
+                        coursewareAccess: coursewareAccess,
+                        progressEarned: Int(cdCourse.progressEarned),
+                        progressPossible: Int(cdCourse.progressPossible),
+                        auditAccessExpires: cdCourse.auditAccessExpires,
+                        startDisplay: cdCourse.startDisplay,
+                        startType: DisplayStartType(value: cdCourse.startType),
+                        lmsPrice: cdCourse.lmsPrice
+                    )
+                }
+            
+            return PrimaryEnrollment(
+                primaryCourse: primaryCourse,
+                courses: courses,
+                totalPages: Int(result.totalPages),
+                count: Int(result.count)
+            )
+        } else {
+            throw NoCachedDataError()
+        }
+    }
+    
     public func loadPrimaryEnrollment() async throws -> PrimaryEnrollment {
         try await context.perform {[context] in
             let request = CDMyEnrollments.fetchRequest()
             if let result = try context.fetch(request).first {
                 let primaryCourse = result.primaryCourse.flatMap { cdPrimaryCourse -> PrimaryCourse? in
-
+                    
                     let futureAssignments = (cdPrimaryCourse.futureAssignments as? Set<CDAssignment> ?? [])
                         .map { future in
                             return Assignment(
@@ -98,7 +256,7 @@ public class DashboardPersistence: DashboardPersistenceProtocol {
                                 firstComponentBlockId: past.firstComponentBlockId
                             )
                         }
-
+                    
                     return PrimaryCourse(
                         name: cdPrimaryCourse.name ?? "",
                         org: cdPrimaryCourse.org ?? "",
@@ -112,12 +270,36 @@ public class DashboardPersistence: DashboardPersistenceProtocol {
                         progressEarned: Int(cdPrimaryCourse.progressEarned),
                         progressPossible: Int(cdPrimaryCourse.progressPossible),
                         lastVisitedBlockID: cdPrimaryCourse.lastVisitedBlockID ?? "",
-                        resumeTitle: cdPrimaryCourse.resumeTitle
+                        resumeTitle: cdPrimaryCourse.resumeTitle,
+                        auditAccessExpires: cdPrimaryCourse.auditAccessExpires,
+                        startDisplay: cdPrimaryCourse.startDisplay,
+                        startType: DisplayStartType(value: cdPrimaryCourse.startType),
+                        isUpgradeable: cdPrimaryCourse.isUpgradeable,
+                        sku: cdPrimaryCourse.sku,
+                        lmsPrice: cdPrimaryCourse.lmsPrice?.doubleValue,
+                        isSelfPaced: cdPrimaryCourse.isSelfPaced
                     )
                 }
-
+                
                 let courses = (result.courses as? Set<CDDashboardCourse> ?? [])
                     .map { cdCourse in
+                        var coursewareAccess: CoursewareAccess?
+                        if let access = cdCourse.coursewareAccess {
+                            var coursewareError: CourseAccessError?
+                            if let error = access.errorCode {
+                                coursewareError = CourseAccessError(rawValue: error) ?? .unknown
+                            }
+                            
+                            coursewareAccess = CoursewareAccess(
+                                hasAccess: access.hasAccess,
+                                errorCode: coursewareError,
+                                developerMessage: access.developerMessage,
+                                userMessage: access.userMessage,
+                                additionalContextUserMessage: access.additionalContextUserMessage,
+                                userFragment: access.userFragment
+                            )
+                        }
+                        
                         return CourseItem(
                             name: cdCourse.name ?? "",
                             org: cdCourse.org ?? "",
@@ -131,11 +313,21 @@ public class DashboardPersistence: DashboardPersistenceProtocol {
                             courseID: cdCourse.courseID ?? "",
                             numPages: Int(cdCourse.numPages),
                             coursesCount: Int(cdCourse.courseCount),
+                            sku: cdCourse.courseSku ?? "",
+                            dynamicUpgradeDeadline: cdCourse.dynamicUpgradeDeadline,
+                            mode: DataLayer.Mode(rawValue: cdCourse.mode ?? "") ?? .unknown,
+                            isSelfPaced: cdCourse.isSelfPaced,
+                            courseRawImage: cdCourse.courseRawImage,
+                            coursewareAccess: coursewareAccess,
                             progressEarned: Int(cdCourse.progressEarned),
-                            progressPossible: Int(cdCourse.progressPossible)
+                            progressPossible: Int(cdCourse.progressPossible),
+                            auditAccessExpires: cdCourse.auditAccessExpires,
+                            startDisplay: cdCourse.startDisplay,
+                            startType: DisplayStartType(value: cdCourse.startType),
+                            lmsPrice: cdCourse.lmsPrice
                         )
                     }
-
+                
                 return PrimaryEnrollment(
                     primaryCourse: primaryCourse,
                     courses: courses,
@@ -148,14 +340,13 @@ public class DashboardPersistence: DashboardPersistenceProtocol {
         }
     }
     
-    // swiftlint:disable function_body_length
     public func savePrimaryEnrollment(enrollments: PrimaryEnrollment) {
         // Deleting all old data before saving new ones
         clearOldEnrollmentsData()
         context.perform {[context] in
             let newEnrollment = CDMyEnrollments(context: context)
             context.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump
-
+            
             // Saving new courses
             newEnrollment.courses = NSSet(array: enrollments.courses.map { course in
                 let cdCourse = CDDashboardCourse(context: self.context)
@@ -170,14 +361,18 @@ public class DashboardPersistence: DashboardPersistenceProtocol {
                 cdCourse.courseID = course.courseID
                 cdCourse.numPages = Int32(course.numPages)
                 cdCourse.hasAccess = course.hasAccess
+                cdCourse.courseSku = course.sku
+                cdCourse.dynamicUpgradeDeadline = course.dynamicUpgradeDeadline
+                cdCourse.mode = course.mode.rawValue
+                cdCourse.isSelfPaced = course.isSelfPaced ?? false
                 cdCourse.progressEarned = Int32(course.progressEarned)
                 cdCourse.progressPossible = Int32(course.progressPossible)
                 return cdCourse
             })
-
+            
             // Saving PrimaryCourse
             if let primaryCourse = enrollments.primaryCourse {
-                let cdPrimaryCourse = CDPrimaryCourse(context: context)
+                let cdPrimaryCourse = CDPrimaryCourse(context: self.context)
                 
                 let futureAssignments = primaryCourse.futureAssignments.map { assignment in
                     let cdAssignment = CDAssignment(context: self.context)
@@ -202,7 +397,10 @@ public class DashboardPersistence: DashboardPersistenceProtocol {
                     return cdAssignment
                 }
                 cdPrimaryCourse.pastAssignments = NSSet(array: pastAssignments)
-                
+                var lmsPrice: NSNumber?
+                if let price = primaryCourse.lmsPrice {
+                    lmsPrice = NSNumber(value: price)
+                }
                 cdPrimaryCourse.name = primaryCourse.name
                 cdPrimaryCourse.org = primaryCourse.org
                 cdPrimaryCourse.courseID = primaryCourse.courseID
@@ -214,13 +412,17 @@ public class DashboardPersistence: DashboardPersistenceProtocol {
                 cdPrimaryCourse.progressPossible = Int32(primaryCourse.progressPossible)
                 cdPrimaryCourse.lastVisitedBlockID = primaryCourse.lastVisitedBlockID
                 cdPrimaryCourse.resumeTitle = primaryCourse.resumeTitle
-
+                cdPrimaryCourse.sku = primaryCourse.sku
+                cdPrimaryCourse.lmsPrice = lmsPrice
+                cdPrimaryCourse.isUpgradeable = primaryCourse.isUpgradeable
+                cdPrimaryCourse.isSelfPaced = primaryCourse.isSelfPaced ?? false
+                
                 newEnrollment.primaryCourse = cdPrimaryCourse
             }
-
+            
             newEnrollment.totalPages = Int32(enrollments.totalPages)
             newEnrollment.count = Int32(enrollments.count)
-
+            
             do {
                 try context.save()
             } catch {
@@ -234,13 +436,13 @@ public class DashboardPersistence: DashboardPersistenceProtocol {
         context.perform {[context] in
             let fetchRequest1: NSFetchRequest<NSFetchRequestResult> = CDDashboardCourse.fetchRequest()
             let batchDeleteRequest1 = NSBatchDeleteRequest(fetchRequest: fetchRequest1)
-
+            
             let fetchRequest2: NSFetchRequest<NSFetchRequestResult> = CDPrimaryCourse.fetchRequest()
             let batchDeleteRequest2 = NSBatchDeleteRequest(fetchRequest: fetchRequest2)
-
+            
             let fetchRequest3: NSFetchRequest<NSFetchRequestResult> = CDMyEnrollments.fetchRequest()
             let batchDeleteRequest3 = NSBatchDeleteRequest(fetchRequest: fetchRequest3)
-
+            
             do {
                 try context.execute(batchDeleteRequest1)
                 try context.execute(batchDeleteRequest2)
@@ -248,6 +450,40 @@ public class DashboardPersistence: DashboardPersistenceProtocol {
             } catch {
                 print("Error when deleting old data:", error)
             }
+        }
+    }
+    
+    public func saveServerConfig(configs: DataLayer.ServerConfigs?) {
+        context.performAndWait {
+            let result = try? context.fetch(CDServerConfigs.fetchRequest())
+            var item: CDServerConfigs?
+            
+            if let result, !result.isEmpty {
+                item = result.first
+                item?.config = configs?.config
+            } else {
+                item = CDServerConfigs(context: context)
+            }
+            
+            context.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump
+            item?.config = configs?.config
+            do {
+                try context.save()
+            } catch {
+                print("⛔️⛔️⛔️⛔️⛔️", error)
+            }
+        }
+    }
+    
+    public func loadServerConfig() throws -> DataLayer.ServerConfigs? {
+        let result = try? context.fetch(CDServerConfigs.fetchRequest())
+            .map { DataLayer.ServerConfigs(config: $0.config ?? "")}
+        
+        if let result, !result.isEmpty {
+            return result.first
+            
+        } else {
+            throw NoCachedDataError()
         }
     }
 }

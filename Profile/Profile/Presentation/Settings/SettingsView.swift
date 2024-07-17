@@ -67,7 +67,12 @@ public struct SettingsView: View {
                             } else {
                                 manageAccount
                                 settings
-                                datesAndCalendar
+                                if viewModel.serverConfig.iapConfig.enabled &&
+                                    viewModel.serverConfig.iapConfig.restoreEnabled {
+                                    restorePurchases
+                                }
+                                // Commenting this for MVP, LEARNER-10102
+//                                datesAndCalendar
                                 ProfileSupportInfoView(viewModel: viewModel)
                                 logOutButton
                             }
@@ -196,6 +201,51 @@ public struct SettingsView: View {
         )
     }
     
+    @ViewBuilder
+    private var restorePurchases: some View {
+        Text(ProfileLocalization.Courseupgrade.purchases)
+            .padding(.horizontal, 24)
+            .font(Theme.Fonts.labelLarge)
+            .foregroundColor(Theme.Colors.textSecondary)
+            .accessibilityIdentifier("purchases_heading_text")
+            .padding(.top, 12)
+        
+        VStack(alignment: .leading, spacing: 12) {
+            
+            Text(ProfileLocalization.Courseupgrade.restorePurchases)
+                .font(Theme.Fonts.titleMedium)
+                .foregroundColor(Theme.Colors.textPrimary)
+                .accessibilityIdentifier("restore_title_text")
+            
+            Text(ProfileLocalization.Courseupgrade.restorePurchasesText)
+                .font(Theme.Fonts.labelLarge)
+                .foregroundColor(Theme.Colors.textSecondary)
+                .accessibilityIdentifier("restore_message_text")
+
+            Spacer()
+            
+            StyledButton(
+                ProfileLocalization.Courseupgrade.restorePurchases,
+                action: {
+                    Task {
+                        await viewModel.restorePurchases()
+                    }
+                },
+                color: .clear,
+                textColor: Theme.Colors.accentColor,
+                borderColor: Theme.Colors.accentColor
+            )
+            .accessibilityIdentifier("video_settings_button")
+            
+        }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(ProfileLocalization.settingsVideo)
+        .cardStyle(
+            bgColor: Theme.Colors.textInputUnfocusedBackground,
+            strokeColor: .clear
+        )
+    }
+    
     // MARK: - Log out
     
     private var logOutButton: some View {
@@ -250,7 +300,9 @@ struct SettingsView_Previews: PreviewProvider {
             router: router,
             analytics: ProfileAnalyticsMock(),
             coreAnalytics: CoreAnalyticsMock(),
-            config: ConfigMock()
+            config: ConfigMock(),
+            serverConfig: ServerConfigProtocolMock(),
+            upgradeHandler: CourseUpgradeHandlerProtocolMock()
         )
         
         SettingsView(viewModel: vm)

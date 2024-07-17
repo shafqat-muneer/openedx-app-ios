@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="22757" systemVersion="23E224" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="22758" systemVersion="23E224" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="CDAssignment" representedClassName=".CDAssignment" syncable="YES" codeGenerationType="class">
         <attribute name="complete" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="date" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
@@ -14,27 +14,45 @@
         </uniquenessConstraints>
     </entity>
     <entity name="CDDashboardCourse" representedClassName=".CDDashboardCourse" syncable="YES" codeGenerationType="class">
+        <attribute name="auditAccessExpires" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="certificate" optional="YES" attributeType="String"/>
         <attribute name="courseCount" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="courseEnd" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="courseID" optional="YES" attributeType="String"/>
+        <attribute name="courseRawImage" optional="YES" attributeType="String"/>
+        <attribute name="courseSku" optional="YES" attributeType="String"/>
         <attribute name="courseStart" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="desc" optional="YES" attributeType="String"/>
+        <attribute name="dynamicUpgradeDeadline" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="enrollmentEnd" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="enrollmentStart" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="hasAccess" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="imageURL" optional="YES" attributeType="String"/>
+        <attribute name="isSelfPaced" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="lmsPrice" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="mode" optional="YES" attributeType="String"/>
         <attribute name="name" optional="YES" attributeType="String"/>
         <attribute name="numPages" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="org" optional="YES" attributeType="String"/>
         <attribute name="progressEarned" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="progressPossible" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="startDisplay" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="startType" optional="YES" attributeType="String"/>
+        <relationship name="coursewareAccess" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CDDashboardCoursewareAccess"/>
         <uniquenessConstraints>
             <uniquenessConstraint>
                 <constraint value="courseID"/>
                 <constraint value="name"/>
             </uniquenessConstraint>
         </uniquenessConstraints>
+    </entity>
+    <entity name="CDDashboardCoursewareAccess" representedClassName="CDDashboardCoursewareAccess" syncable="YES" codeGenerationType="class">
+        <attribute name="additionalContextUserMessage" optional="YES" attributeType="String"/>
+        <attribute name="developerMessage" optional="YES" attributeType="String"/>
+        <attribute name="errorCode" optional="YES" attributeType="String"/>
+        <attribute name="hasAccess" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="userFragment" optional="YES" attributeType="String"/>
+        <attribute name="userMessage" optional="YES" attributeType="String"/>
     </entity>
     <entity name="CDMyEnrollments" representedClassName=".CDMyEnrollments" syncable="YES" codeGenerationType="class">
         <attribute name="count" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
@@ -43,17 +61,24 @@
         <relationship name="primaryCourse" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CDPrimaryCourse"/>
     </entity>
     <entity name="CDPrimaryCourse" representedClassName=".CDPrimaryCourse" syncable="YES" codeGenerationType="class">
+        <attribute name="auditAccessExpires" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="courseBanner" optional="YES" attributeType="String"/>
         <attribute name="courseEnd" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="courseID" optional="YES" attributeType="String"/>
         <attribute name="courseStart" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="hasAccess" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="isSelfPaced" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="isUpgradeable" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="lastVisitedBlockID" optional="YES" attributeType="String"/>
+        <attribute name="lmsPrice" optional="YES" attributeType="Double" usesScalarValueType="NO"/>
         <attribute name="name" optional="YES" attributeType="String"/>
         <attribute name="org" optional="YES" attributeType="String"/>
         <attribute name="progressEarned" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="progressPossible" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="resumeTitle" optional="YES" attributeType="String"/>
+        <attribute name="sku" optional="YES" attributeType="String"/>
+        <attribute name="startDisplay" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="startType" optional="YES" attributeType="String"/>
         <relationship name="futureAssignments" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CDAssignment"/>
         <relationship name="pastAssignments" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CDAssignment"/>
         <uniquenessConstraints>
@@ -61,5 +86,8 @@
                 <constraint value="courseID"/>
             </uniquenessConstraint>
         </uniquenessConstraints>
+    </entity>
+    <entity name="CDServerConfigs" representedClassName=".CDServerConfigs" syncable="YES" codeGenerationType="class">
+        <attribute name="config" optional="YES" attributeType="String"/>
     </entity>
 </model>
