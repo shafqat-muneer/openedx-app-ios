@@ -18,7 +18,7 @@ public struct DynamicOffsetView: View {
         }
         return 300 - topInset
     }
-
+    
     private let coordinateBoundaryLower: CGFloat = -115
     private var idiom: UIUserInterfaceIdiom { UIDevice.current.userInterfaceIdiom }
     @Binding private var shouldShowUpgradeButton: Bool

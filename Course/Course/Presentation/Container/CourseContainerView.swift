@@ -36,7 +36,7 @@ public struct CourseContainerView: View {
         guard topInset > 0 else {
             return 40
         }
-
+        
         return topInset
     }
     
