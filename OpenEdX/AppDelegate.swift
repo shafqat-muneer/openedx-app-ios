@@ -75,7 +75,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window?.rootViewController = RouteController()
         window?.makeKeyAndVisible()
         window?.tintColor = Theme.UIColors.accentColor
-          
+        
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(didUserAuthorize),
