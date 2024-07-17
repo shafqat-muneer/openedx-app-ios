@@ -237,7 +237,7 @@ public extension DataLayer.PrimaryEnrollment {
             progressPossible: primary.progress?.totalAssignmentsCount ?? 0,
             lastVisitedBlockID: primary.courseStatus?.lastVisitedBlockID,
             resumeTitle: primary.courseStatus?.lastVisitedUnitDisplayName,
-            auditAccessExpires: primary.auditAccessExpires,
+            auditAccessExpires: primary.auditAccessExpires.flatMap { Date(iso8601: $0) },
             startDisplay: primary.course?.startDisplay.flatMap { Date(iso8601: $0) },
             startType: DisplayStartType(value: primary.course?.startType.rawValue),
             isUpgradeable: primary.isUpgradeable,
