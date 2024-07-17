@@ -7,6 +7,17 @@
 
 import Foundation
 
+public enum DisplayStartType: String, Codable {
+    case timestamp
+    case string
+    case empty
+    case unknown
+    
+    public init(value: String?) {
+        self = DisplayStartType(rawValue: value ?? "") ?? .unknown
+    }
+}
+
 public struct PrimaryEnrollment: Hashable {
     public let primaryCourse: PrimaryCourse?
     public var courses: [CourseItem]
@@ -35,7 +46,13 @@ public struct PrimaryCourse: Hashable {
     public let progressPossible: Int
     public let lastVisitedBlockID: String?
     public let resumeTitle: String?
-    
+    public let auditAccessExpires: Date?
+    public let startDisplay: Date?
+    public let startType: DisplayStartType?
+    public let isUpgradeable: Bool
+    public let sku: String?
+    public let lmsPrice: Double?
+    public let isSelfPaced: Bool
     public init(
         name: String,
         org: String,
@@ -49,7 +66,14 @@ public struct PrimaryCourse: Hashable {
         progressEarned: Int,
         progressPossible: Int,
         lastVisitedBlockID: String?,
-        resumeTitle: String?
+        resumeTitle: String?,
+        auditAccessExpires: Date?,
+        startDisplay: Date?,
+        startType: DisplayStartType?,
+        isUpgradeable: Bool,
+        sku: String?,
+        lmsPrice: Double?,
+        isSelfPaced: Bool
     ) {
         self.name = name
         self.org = org
@@ -64,6 +88,13 @@ public struct PrimaryCourse: Hashable {
         self.progressPossible = progressPossible
         self.lastVisitedBlockID = lastVisitedBlockID
         self.resumeTitle = resumeTitle
+        self.auditAccessExpires = auditAccessExpires
+        self.startDisplay = startDisplay
+        self.startType = startType
+        self.isUpgradeable = isUpgradeable
+        self.sku = sku
+        self.lmsPrice = lmsPrice
+        self.isSelfPaced = isSelfPaced
     }
 }
 

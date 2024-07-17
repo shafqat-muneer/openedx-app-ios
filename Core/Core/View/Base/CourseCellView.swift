@@ -17,37 +17,56 @@ public enum CellType {
 public struct CourseCellView: View {
     
     @State private var showView = false
+    private var model: CourseItem
     private var courseImage: String
     private var courseName: String
     private var courseOrg: String
-    private var courseStart: String
-    private var courseEnd: String
+    private var courseStart: Date?
+    private var courseEnd: Date?
     private var type: CellType
     private var index: Double
     private var cellsCount: Int
-    private var idiom: UIUserInterfaceIdiom { UIDevice.current.userInterfaceIdiom }
     
-    public init(model: CourseItem, type: CellType, index: Int, cellsCount: Int) {
+    private var idiom: UIUserInterfaceIdiom { UIDevice.current.userInterfaceIdiom }
+    private var isUpgradeable: Bool
+    private var upgradeAction: (() -> Void)?
+    
+    public init(
+        model: CourseItem,
+        type: CellType,
+        index: Int,
+        cellsCount: Int,
+        upgradeAction: (() -> Void)? = nil
+    ) {
+        self.model = model
         self.type = type
         self.courseImage = model.imageURL
         self.courseName = model.name
-        self.courseStart = model.courseStart?.dateToString(style: .startDDMonthYear) ?? ""
-        self.courseEnd = model.courseEnd?.dateToString(style: .endedMonthDay) ?? ""
+        self.courseStart = model.courseStart
+        self.courseEnd = model.courseEnd
         self.courseOrg =  model.org
         self.index = Double(index) + 1
         self.cellsCount = cellsCount
+        self.isUpgradeable = model.isUpgradeable
+        self.upgradeAction = upgradeAction
     }
     
     public var body: some View {
-        VStack {
+        VStack(spacing: 0) {
             HStack {
                 KFImage(URL(string: courseImage))
                     .onFailureImage(CoreAssets.noCourseImage.image)
                     .resizable()
                     .aspectRatio(contentMode: .fill)
                     .frame(width: idiom == .pad ? 171 : 105, height: 105)
-                    .cornerRadius(8)
-                    .clipShape(RoundedRectangle(cornerRadius: Theme.Shapes.cardImageRadius))
+                    .clipShape(
+                        RoundedCorners(
+                            tl: Theme.Shapes.cardImageRadius,
+                            tr: Theme.Shapes.cardImageRadius,
+                            bl: isUpgradeable ? 0 : Theme.Shapes.cardImageRadius,
+                            br: isUpgradeable ? 0 : Theme.Shapes.cardImageRadius
+                        )
+                    )
                     .padding(.leading, 3)
                     .accessibilityElement(children: .ignore)
                     .accessibilityIdentifier("course_image")
@@ -69,16 +88,15 @@ public struct CourseCellView: View {
                     Spacer()
                     if type == .dashboard {
                         HStack {
-                            if courseEnd != "" {
-                                Text(courseEnd)
-                                    .font(Theme.Fonts.labelMedium)
-                                    .foregroundColor(Theme.Colors.textSecondary)
-                                    .accessibilityIdentifier("course_end_text")
-                            } else {
-                                Text(courseStart)
-                                    .font(Theme.Fonts.labelMedium)
-                                    .foregroundColor(Theme.Colors.textSecondary)
-                                    .accessibilityIdentifier("course_start_text")
+                            if courseStart != nil || courseEnd != nil || model.auditAccessExpires != nil {
+                                CourseAccessMessageView(
+                                    startDate: courseStart,
+                                    endDate: courseEnd,
+                                    auditAccessExpires: model.auditAccessExpires,
+                                    startDisplay: model.startDisplay,
+                                    startType: model.startType,
+                                    dateStyle: .monthDay
+                                )
                             }
                             Spacer()
                             CoreAssets.arrowRight16.swiftUIImage.renderingMode(.template)
@@ -89,26 +107,58 @@ public struct CourseCellView: View {
                                 .accessibilityIdentifier("arrow_image")
                         }
                     }
-                }.padding(.horizontal, 10)
-                    .padding(.vertical, type == .discovery ? 10 : 0)
+                }
+                .padding(10)
                 Spacer()
             }
-           
-        }.frame(height: 105)
-            .background(Theme.Colors.background)
-            .opacity(showView ? 1 : 0)
-            .offset(y: showView ? 0 : 20)
-            .accessibilityElement(children: .ignore)
-            .accessibilityLabel(courseName + " " + (type == .dashboard ? (courseEnd == "" ? courseStart : courseEnd) : ""))
-            .onAppear {
-                DispatchQueue.main.asyncAfter(deadline: .now()) {
-                    withAnimation(.easeInOut(duration: (index <= 5 ? 0.3 : 0.1))
-                        .delay((index <= 5 ? index : 0) * 0.05)) {
-                            showView = true
-                        }
-                }
+            if isUpgradeable {
+                StyledButton(
+                    CoreLocalization.CourseUpgrade.Button.upgrade,
+                    action: {
+                        upgradeAction?()
+                    },
+                    color: Theme.Colors.accentColor,
+                    textColor: Theme.Colors.primaryButtonTextColor,
+                    leftImage: Image(systemName: "lock.fill"),
+                    rightImage: Image(systemName: "info.circle"),
+                    imagesStyle: .onSides,
+                    isTitleTracking: false,
+                    isLimitedOnPad: false,
+                    shape: RoundedCorners(
+                        tl: 0,
+                        tr: 0,
+                        bl: Theme.Shapes.cardImageRadius,
+                        br: Theme.Shapes.cardImageRadius
+                    )
+                )
+                .padding(.leading, 3)
             }
-           
+        }
+        .padding(.vertical, type == .discovery ? 10 : 0)
+        .background(Theme.Colors.background)
+        .opacity(showView ? 1 : 0)
+        .offset(y: showView ? 0 : 20)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(
+            courseName + " " +
+            (type == .dashboard ? CourseItem.nextRelevantDateMessage(
+                startDate: model.courseStart,
+                endDate: model.courseEnd,
+                auditAccessExpires: model.auditAccessExpires,
+                startDisplay: model.startDisplay,
+                startType: model.startType,
+                dateStyle: .monthDay) ?? ""
+             : "")
+        )
+        .onAppear {
+            DispatchQueue.main.asyncAfter(deadline: .now()) {
+                withAnimation(.easeInOut(duration: (index <= 5 ? 0.3 : 0.1))
+                    .delay((index <= 5 ? index : 0) * 0.05)) {
+                        showView = true
+                    }
+            }
+        }
+        
         VStack {
             if Int(index) != cellsCount {
                 Divider()
@@ -138,8 +188,14 @@ struct CourseCellView_Previews: PreviewProvider {
         courseID: "1",
         numPages: 1,
         coursesCount: 10,
+        isSelfPaced: false,
+        courseRawImage: nil,
+        coursewareAccess: nil,
         progressEarned: 4,
-        progressPossible: 10
+        progressPossible: 10,
+        auditAccessExpires: nil,
+        startDisplay: nil,
+        startType: nil
     )
     
     static var previews: some View {

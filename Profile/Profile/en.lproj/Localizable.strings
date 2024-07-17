@@ -81,8 +81,6 @@
 "SETTINGS.TAP_TO_UPDATE" = "Tap to update to version";
 "SETTINGS.TAP_TO_INSTALL" = "Tap to install required app update";
 
-"ERROR.CANNOT_SEND_EMAIL" = "Cannot send email. It seems your email client is not set up.";
-
 "CALENDAR.NEW_CALENDAR" = "New Calendar";
 "CALENDAR.CHANGE_SYNC_OPTIONS" = "Change Sync Options";
 "CALENDAR.ACCOUNT" = "Account";
@@ -147,3 +145,7 @@
 
 "SYNC_SELECTOR.SYNCED" = "Synced";
 "SYNC_SELECTOR.NOT_SYNCED" = "Not Synced";
+
+"COURSEUPGRADE.PURCHASES" = "Purchases";
+"COURSEUPGRADE.RESTORE_PURCHASES" = "Restore purchases";
+"COURSEUPGRADE.RESTORE_PURCHASES_TEXT" = "Sign into the app store to restore access to courses you have previously paid to upgrade";

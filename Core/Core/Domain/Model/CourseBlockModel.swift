@@ -24,7 +24,11 @@ public struct CourseStructure: Equatable {
     public let certificate: Certificate?
     public let org: String
     public let isSelfPaced: Bool
+    public let isUpgradeable: Bool
+    public let sku: String?
+    public let coursewareAccessDetails: CoursewareAccessDetails?
     public let courseProgress: CourseProgress?
+    public let lmsPrice: Double?
     
     public init(
         id: String,
@@ -39,7 +43,11 @@ public struct CourseStructure: Equatable {
         certificate: Certificate?,
         org: String,
         isSelfPaced: Bool,
-        courseProgress: CourseProgress?
+        isUpgradeable: Bool,
+        sku: String?,
+        coursewareAccessDetails: CoursewareAccessDetails?,
+        courseProgress: CourseProgress?,
+        lmsPrice: Double?
     ) {
         self.id = id
         self.graded = graded
@@ -53,7 +61,11 @@ public struct CourseStructure: Equatable {
         self.certificate = certificate
         self.org = org
         self.isSelfPaced = isSelfPaced
+        self.isUpgradeable = isUpgradeable
+        self.sku = sku
+        self.coursewareAccessDetails = coursewareAccessDetails
         self.courseProgress = courseProgress
+        self.lmsPrice = lmsPrice
     }
 
     public func totalVideosSizeInBytes(downloadQuality: DownloadQuality) -> Int {
@@ -79,6 +91,72 @@ public struct CourseStructure: Equatable {
         }.filter { $0.id == courseBlockId }.first
         return block
     }
+}
+
+public struct CoursewareAccessDetails: Hashable {
+    public let hasUNMETPrerequisites: Bool
+    public let isTooEarly: Bool
+    public let auditAccessExpires: String?
+    public let coursewareAccess: CoursewareAccess?
+    
+    public init(
+        hasUNMETPrerequisites: Bool,
+        isTooEarly: Bool,
+        auditAccessExpires: String?,
+        coursewareAccess: CoursewareAccess?
+    ) {
+        self.hasUNMETPrerequisites = hasUNMETPrerequisites
+        self.isTooEarly = isTooEarly
+        self.auditAccessExpires = auditAccessExpires
+        self.coursewareAccess = coursewareAccess
+    }
+    
+    public static func == (lhs: CoursewareAccessDetails, rhs: CoursewareAccessDetails) -> Bool {
+        lhs.hasUNMETPrerequisites == rhs.hasUNMETPrerequisites &&
+        lhs.isTooEarly == rhs.isTooEarly &&
+        lhs.auditAccessExpires == rhs.auditAccessExpires &&
+        lhs.coursewareAccess == rhs.coursewareAccess
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(hasUNMETPrerequisites)
+        hasher.combine(isTooEarly)
+        hasher.combine(auditAccessExpires)
+        hasher.combine(coursewareAccess)
+    }
+}
+
+public struct CoursewareAccess: Hashable {
+    public let hasAccess: Bool
+    public let errorCode: CourseAccessError?
+    public let developerMessage: String?
+    public let userMessage: String?
+    public let additionalContextUserMessage: String?
+    public let userFragment: String?
+    
+    public init(
+        hasAccess: Bool,
+        errorCode: CourseAccessError?,
+        developerMessage: String?,
+        userMessage: String?,
+        additionalContextUserMessage: String?,
+        userFragment: String?
+    ) {
+        self.hasAccess = hasAccess
+        self.errorCode = errorCode
+        self.developerMessage = developerMessage
+        self.userMessage = userMessage
+        self.additionalContextUserMessage = additionalContextUserMessage
+        self.userFragment = userFragment
+    }
+}
+
+public enum CourseAccessError: String {
+    case notStarted = "course_not_started"
+    case auditExpired = "audit_expired"
+    case visibilityError = "not_visible_to_user"
+    case milestoneError = "unfulfilled_milestones"
+    case unknown
 }
 
 public struct CourseProgress {

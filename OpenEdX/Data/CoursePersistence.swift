@@ -22,7 +22,24 @@ public class CoursePersistence: CoursePersistenceProtocol {
         try await context.perform { [context] in
             let result = try? context.fetch(CDCourseItem.fetchRequest())
                 .map {
-                    CourseItem(name: $0.name ?? "",
+                    var coursewareAccess: CoursewareAccess?
+                    if let access = $0.coursewareAccess {
+                        var coursewareError: CourseAccessError?
+                        if let error = access.errorCode {
+                            coursewareError = CourseAccessError(rawValue: error) ?? .unknown
+                        }
+                        
+                        coursewareAccess = CoursewareAccess(
+                            hasAccess: access.hasAccess,
+                            errorCode: coursewareError,
+                            developerMessage: access.developerMessage,
+                            userMessage: access.userMessage,
+                            additionalContextUserMessage: access.additionalContextUserMessage,
+                            userFragment: access.userFragment
+                        )
+                    }
+                    
+                    return CourseItem(name: $0.name ?? "",
                                org: $0.org ?? "",
                                shortDescription: $0.desc ?? "",
                                imageURL: $0.imageURL ?? "",
@@ -34,8 +51,15 @@ public class CoursePersistence: CoursePersistenceProtocol {
                                courseID: $0.courseID ?? "",
                                numPages: Int($0.numPages),
                                coursesCount: Int($0.courseCount),
+                               isSelfPaced: $0.isSelfPaced,
+                               courseRawImage: $0.courseRawImage,
+                               coursewareAccess: coursewareAccess,
                                progressEarned: 0,
-                               progressPossible: 0)
+                               progressPossible: 0,
+                               auditAccessExpires: $0.auditAccessExpires,
+                               startDisplay: $0.startDisplay,
+                               startType: DisplayStartType(value: $0.startType)
+                    )
                 }
             if let result, !result.isEmpty {
                 return result

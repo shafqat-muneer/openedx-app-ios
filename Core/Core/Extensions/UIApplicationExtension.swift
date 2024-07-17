@@ -10,7 +10,7 @@ import Theme
 
 public extension UIApplication {
     
-    var keyWindow: UIWindow? {
+    var window: UIWindow? {
         UIApplication.shared.windows.first { $0.isKeyWindow }
     }
     
@@ -37,7 +37,7 @@ public extension UIApplication {
     
     var windowInsets: UIEdgeInsets {
         guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-                let window = windowScene.windows.first else {
+              let window = windowScene.windows.first else {
             return .zero
         }
 

@@ -76,6 +76,9 @@ public struct AllCoursesView: View {
                                             enrollmentStart: course.enrollmentStart,
                                             enrollmentEnd: course.enrollmentEnd,
                                             title: course.name,
+                                            org: course.org,
+                                            courseRawImage: course.courseRawImage,
+                                            coursewareAccess: course.coursewareAccess,
                                             showDates: false,
                                             lastVisitedBlockID: nil
                                         )
@@ -88,7 +91,10 @@ public struct AllCoursesView: View {
                                             courseStartDate: course.courseStart,
                                             courseEndDate: course.courseEnd,
                                             hasAccess: course.hasAccess,
-                                            showProgress: true
+                                            showProgress: true,
+                                            auditAccessExpires: course.auditAccessExpires,
+                                            startDisplay: course.startDisplay,
+                                            startType: course.startType
                                         ).padding(8)
                                     })
                                     .accessibilityIdentifier("course_item")

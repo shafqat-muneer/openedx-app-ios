@@ -239,6 +239,9 @@ extension DiscoveryWebviewViewModel: WebViewNavigationDelegate {
             enrollmentStart: courseDetails.enrollmentStart,
             enrollmentEnd: courseDetails.enrollmentEnd,
             title: courseDetails.courseTitle,
+            org: courseDetails.org,
+            courseRawImage: courseDetails.courseRawImage,
+            coursewareAccess: nil,
             showDates: false,
             lastVisitedBlockID: nil
         )
