@@ -15,6 +15,10 @@ public extension UIApplication {
         return scene?.windows
     }
 
+    var window: UIWindow? {
+        windows?.first
+    }
+
     var keyWindow: UIWindow? {
         windows?.first { $0.isKeyWindow }
     }
