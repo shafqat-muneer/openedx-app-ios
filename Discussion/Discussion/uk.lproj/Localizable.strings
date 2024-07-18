@@ -57,3 +57,5 @@
 "POST_TYPE.DISCUSSION" = "дискусія";
 
 "ANONYMOUS" = "Анонім";
+
+"ERROR.UNABLE_TO_LOAD_DISCUSSION" = "Unable to load discussions.\nTry again later.";

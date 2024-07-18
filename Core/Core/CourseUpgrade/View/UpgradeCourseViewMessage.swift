@@ -13,6 +13,7 @@ public struct UpgradeCourseViewMessage: View {
     let icon: Image
     @Binding var coordinate: CGFloat
     @Binding var collapsed: Bool
+    @Binding private var viewHeight: CGFloat
     @Binding var shouldShowUpgradeButton: Bool
     @Binding var shouldHideMenuBar: Bool
     let backAction: (() -> Void)?
@@ -22,6 +23,7 @@ public struct UpgradeCourseViewMessage: View {
         icon: Image,
         coordinate: Binding<CGFloat>,
         collapsed: Binding<Bool>,
+        viewHeight: Binding<CGFloat>,
         shouldShowUpgradeButton: Binding<Bool>,
         shouldHideMenuBar: Binding<Bool>,
         backAction: (() -> Void)?
@@ -30,6 +32,7 @@ public struct UpgradeCourseViewMessage: View {
         self.icon = icon
         self._coordinate = coordinate
         self._collapsed = collapsed
+        self._viewHeight = viewHeight
         self._shouldShowUpgradeButton = shouldShowUpgradeButton
         self._shouldHideMenuBar = shouldHideMenuBar
         self.backAction = backAction
@@ -40,6 +43,7 @@ public struct UpgradeCourseViewMessage: View {
             DynamicOffsetView(
                 coordinate: $coordinate,
                 collapsed: $collapsed,
+                viewHeight: $viewHeight,
                 shouldShowUpgradeButton: $shouldShowUpgradeButton,
                 shouldHideMenuBar: $shouldHideMenuBar
             )
@@ -72,6 +76,7 @@ public struct UpgradeCourseViewMessage: View {
         icon: CoreAssets.upgradeCalendarImage.swiftUIImage,
         coordinate: .constant(0),
         collapsed: .constant(false),
+        viewHeight: .constant(0),
         shouldShowUpgradeButton: .constant(true),
         shouldHideMenuBar: .constant(false),
         backAction: nil

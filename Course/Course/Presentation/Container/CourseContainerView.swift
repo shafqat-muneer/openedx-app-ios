@@ -23,6 +23,7 @@ public struct CourseContainerView: View {
     @State private var coordinate: CGFloat = .zero
     @State private var lastCoordinate: CGFloat = .zero
     @State private var collapsed: Bool = false
+    @State private var viewHeight: CGFloat = .zero
     @Environment(\.isHorizontal) private var isHorizontal
     @Namespace private var animationNamespace
     
@@ -181,6 +182,7 @@ public struct CourseContainerView: View {
                     type: viewModel.type(for: actualAccess) ?? .startDateError(date: courseStart),
                     coordinate: $coordinate,
                     collapsed: $collapsed,
+                    viewHeight: $viewHeight,
                     shouldShowUpgradeButton: $viewModel.shouldShowUpgradeButton,
                     shouldHideMenuBar: $viewModel.shouldHideMenuBar,
                     backAction: {
@@ -201,6 +203,7 @@ public struct CourseContainerView: View {
                         type: type,
                         coordinate: $coordinate,
                         collapsed: $collapsed,
+                        viewHeight: $viewHeight,
                         shouldShowUpgradeButton: $viewModel.shouldShowUpgradeButton,
                         shouldHideMenuBar: $viewModel.shouldHideMenuBar,
                         backAction: {
@@ -211,10 +214,10 @@ public struct CourseContainerView: View {
                             viewModel.router.showTabScreen(tab: .discovery)
                         }
                     )
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .onAppear {
-                            ignoreOffset = true
-                        }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .onAppear {
+                        ignoreOffset = true
+                    }
                 } else {
                     ForEach(CourseTab.allCases) { tab in
                         switch tab {
@@ -227,6 +230,7 @@ public struct CourseContainerView: View {
                                 selection: $viewModel.selection,
                                 coordinate: $coordinate,
                                 collapsed: $collapsed,
+                                viewHeight: $viewHeight,
                                 dateTabIndex: CourseTab.dates.rawValue
                             )
                             .tabItem {
@@ -244,6 +248,7 @@ public struct CourseContainerView: View {
                                 selection: $viewModel.selection,
                                 coordinate: $coordinate,
                                 collapsed: $collapsed,
+                                viewHeight: $viewHeight,
                                 dateTabIndex: CourseTab.dates.rawValue
                             )
                             .tabItem {
@@ -257,6 +262,7 @@ public struct CourseContainerView: View {
                                 courseID: courseID,
                                 coordinate: $coordinate,
                                 collapsed: $collapsed,
+                                viewHeight: $viewHeight,
                                 viewModel: courseDatesViewModel,
                                 shouldShowUpgradeButton: $viewModel.shouldShowUpgradeButton,
                                 shouldHideMenuBar: $viewModel.shouldHideMenuBar
@@ -272,6 +278,7 @@ public struct CourseContainerView: View {
                                 courseID: courseID,
                                 coordinate: $coordinate,
                                 collapsed: $collapsed,
+                                viewHeight: $viewHeight,
                                 viewModel: Container.shared.resolve(DiscussionTopicsViewModel.self,
                                                                     argument: title)!,
                                 router: Container.shared.resolve(DiscussionRouter.self)!,
@@ -289,6 +296,7 @@ public struct CourseContainerView: View {
                                 courseID: courseID,
                                 coordinate: $coordinate,
                                 collapsed: $collapsed,
+                                viewHeight: $viewHeight,
                                 viewModel: Container.shared.resolve(HandoutsViewModel.self, argument: courseID)!,
                                 shouldShowUpgradeButton: $viewModel.shouldShowUpgradeButton,
                                 shouldHideMenuBar: $viewModel.shouldHideMenuBar
