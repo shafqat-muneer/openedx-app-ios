@@ -268,7 +268,7 @@ public class DownloadManager: DownloadManagerProtocol {
     public func deleteFile(blocks: [CourseBlock]) async {
         for block in blocks {
             do {
-                if let fileURL = fileUrl(for: block.id), 
+                if let fileURL = fileUrl(for: block.id),
                     FileManager.default.fileExists(atPath: fileURL.path) {
                     try FileManager.default.removeItem(at: fileURL)
                 }
