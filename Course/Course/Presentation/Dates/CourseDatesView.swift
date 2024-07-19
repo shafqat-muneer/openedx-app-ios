@@ -113,19 +113,6 @@ public struct CourseDatesView: View {
             default:
                 EmptyView()
             }
-            
-            if viewModel.showError {
-                VStack {
-                    Spacer()
-                    SnackBarView(message: viewModel.errorMessage)
-                }
-                .transition(.move(edge: .bottom))
-                .onAppear {
-                    doAfter(Theme.Timeout.snackbarMessageLongTimeout) {
-                        viewModel.errorMessage = nil
-                    }
-                }
-            }
         }
         .onFirstAppear {
             Task {

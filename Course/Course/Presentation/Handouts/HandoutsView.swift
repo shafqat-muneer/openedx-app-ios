@@ -107,22 +107,6 @@ struct HandoutsView: View {
                         }
                     }
                 )
-                
-                // MARK: - Error Alert
-                if viewModel.showError {
-                    VStack {
-                        Spacer()
-                        SnackBarView(message: viewModel.errorMessage)
-                    }
-                    .padding(.bottom, viewModel.connectivity.isInternetAvaliable
-                             ? 0 : OfflineSnackBarView.height)
-                    .transition(.move(edge: .bottom))
-                    .onAppear {
-                        doAfter(Theme.Timeout.snackbarMessageLongTimeout) {
-                            viewModel.errorMessage = nil
-                        }
-                    }
-                }
             }
             
             .onFirstAppear {
