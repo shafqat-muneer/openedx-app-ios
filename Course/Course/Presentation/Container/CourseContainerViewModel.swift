@@ -252,15 +252,12 @@ public class CourseContainerViewModel: BaseCourseViewModel {
             isShowProgress = false
             isShowRefresh = false
             
-        } catch let error {
+        } catch {
             isShowProgress = false
             isShowRefresh = false
             shouldShowUpgradeButton = false
-            if error.isInternetError || error is NoCachedDataError {
-                errorMessage = CoreLocalization.Error.slowOrNoInternetConnection
-            } else {
-                errorMessage = CoreLocalization.Error.unknownError
-            }
+            courseStructure = nil
+            courseVideosStructure = nil
         }
     }
     

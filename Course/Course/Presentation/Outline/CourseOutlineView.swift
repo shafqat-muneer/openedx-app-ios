@@ -188,6 +188,21 @@ public struct CourseOutlineView: View {
                     }
                 )
                 
+                // MARK: - Error Alert
+                if viewModel.showError {
+                    VStack {
+                        Spacer()
+                        SnackBarView(message: viewModel.errorMessage)
+                    }
+                    .padding(.bottom, viewModel.isInternetAvaliable
+                             ? 0 : OfflineSnackBarView.height)
+                    .transition(.move(edge: .bottom))
+                    .onAppear {
+                        doAfter(Theme.Timeout.snackbarMessageLongTimeout) {
+                            viewModel.errorMessage = nil
+                        }
+                    }
+                }
                 if viewModel.isShowProgress {
                     VStack(alignment: .center) {
                         ProgressBar(size: 40, lineWidth: 8)
