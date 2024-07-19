@@ -127,6 +127,19 @@ public struct WebView: UIViewRepresentable {
         }
 
         public func webView(
+            _ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration,
+            for navigationAction: WKNavigationAction,
+            windowFeatures: WKWindowFeatures
+        ) -> WKWebView? {
+            if navigationAction.targetFrame == nil, let url = navigationAction.request.url {
+                if UIApplication.shared.canOpenURL(url) {
+                    UIApplication.shared.open(url)
+                }
+            }
+            return nil
+        }
+
+        public func webView(
             _ webView: WKWebView,
             decidePolicyFor navigationAction: WKNavigationAction
         ) async -> WKNavigationActionPolicy {
