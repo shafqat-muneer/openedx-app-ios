@@ -127,19 +127,6 @@ public struct WebView: UIViewRepresentable {
         }
 
         public func webView(
-            _ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration,
-            for navigationAction: WKNavigationAction,
-            windowFeatures: WKWindowFeatures
-        ) -> WKWebView? {
-            if navigationAction.targetFrame == nil, let url = navigationAction.request.url {
-                if UIApplication.shared.canOpenURL(url) {
-                    UIApplication.shared.open(url)
-                }
-            }
-            return nil
-        }
-
-        public func webView(
             _ webView: WKWebView,
             decidePolicyFor navigationAction: WKNavigationAction
         ) async -> WKNavigationActionPolicy {
@@ -158,20 +145,23 @@ public struct WebView: UIViewRepresentable {
             }
             
             let baseURL = await parent.viewModel.baseURL
-            if !baseURL.isEmpty, !url.absoluteString.starts(with: baseURL) {
-                if navigationAction.navigationType == .other {
-                    return .allow
-                } else if navigationAction.navigationType == .linkActivated {
-                    await MainActor.run {
-                        UIApplication.shared.open(url, options: [:])
-                    }
-                } else if navigationAction.navigationType == .formSubmitted {
-                    return .allow
+            switch navigationAction.navigationType {
+            case .other:
+                return .allow
+            case .linkActivated:
+                await MainActor.run {
+                    UIApplication.shared.open(url, options: [:])
                 }
                 return .cancel
+            case .formSubmitted:
+                return .allow
+            default:
+                if !baseURL.isEmpty, !url.absoluteString.starts(with: baseURL) {
+                    return .cancel
+                } else {
+                    return .allow
+                }
             }
-            
-            return .allow
         }
 
         public func webView(
