@@ -55,7 +55,6 @@ public class HandoutsViewModel: ObservableObject {
             }
         } catch let error {
             isShowProgress = false
-            debugLog(error.localizedDescription)
         }
     }
     
@@ -67,7 +66,6 @@ public class HandoutsViewModel: ObservableObject {
             isShowProgress = false
         } catch let error {
             isShowProgress = false
-            debugLog(error.localizedDescription)
         }
     }
 }
