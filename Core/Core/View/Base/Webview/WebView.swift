@@ -150,7 +150,9 @@ public struct WebView: UIViewRepresentable {
                 return .allow
             case .linkActivated:
                 await MainActor.run {
-                    UIApplication.shared.open(url, options: [:])
+                    if UIApplication.shared.canOpenURL(url) {
+                        UIApplication.shared.open(url, options: [:])
+                    }
                 }
                 return .cancel
             case .formSubmitted:
