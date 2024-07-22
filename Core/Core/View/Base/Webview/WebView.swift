@@ -146,7 +146,7 @@ public struct WebView: UIViewRepresentable {
             
             let baseURL = await parent.viewModel.baseURL
             switch navigationAction.navigationType {
-            case .other:
+            case .other, .formSubmitted:
                 return .allow
             case .linkActivated:
                 await MainActor.run {
@@ -155,8 +155,6 @@ public struct WebView: UIViewRepresentable {
                     }
                 }
                 return .cancel
-            case .formSubmitted:
-                return .allow
             default:
                 if !baseURL.isEmpty, !url.absoluteString.starts(with: baseURL) {
                     return .cancel
