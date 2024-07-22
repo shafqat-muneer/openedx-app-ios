@@ -174,7 +174,8 @@ extension Router: DeepLinkRouter {
             handouts: nil,
             announcements: updates,
             router: self,
-            cssInjector: cssInjector
+            cssInjector: cssInjector,
+            type: .announcements
         )
     }
 
@@ -190,7 +191,8 @@ extension Router: DeepLinkRouter {
             handouts: handouts,
             announcements: nil,
             router: self,
-            cssInjector: cssInjector
+            cssInjector: cssInjector,
+            type: .handouts
         )
     }
 

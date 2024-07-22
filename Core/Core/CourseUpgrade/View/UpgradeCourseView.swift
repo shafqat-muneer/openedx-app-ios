@@ -35,6 +35,7 @@ public struct UpgradeCourseView: View {
     @Binding private var collapsed: Bool
     @Binding private var shouldShowUpgradeButton: Bool
     @Binding private var shouldHideMenuBar: Bool
+    @Binding private var viewHeight: CGFloat
     private var backAction: (() -> Void)?
     @Environment(\.isHorizontal) private var isHorizontal
     private let findAction: (() -> Void)?
@@ -43,6 +44,7 @@ public struct UpgradeCourseView: View {
         type: CourseAccessErrorHelperType,
         coordinate: Binding<CGFloat>,
         collapsed: Binding<Bool>,
+        viewHeight: Binding<CGFloat>,
         shouldShowUpgradeButton: Binding<Bool>,
         shouldHideMenuBar: Binding<Bool>,
         backAction: (() -> Void)?,
@@ -51,6 +53,7 @@ public struct UpgradeCourseView: View {
         self.type = type
         self._coordinate = coordinate
         self._collapsed = collapsed
+        self._viewHeight = viewHeight
         self._shouldShowUpgradeButton = shouldShowUpgradeButton
         self._shouldHideMenuBar = shouldHideMenuBar
         self.backAction = backAction
@@ -81,6 +84,7 @@ public struct UpgradeCourseView: View {
                             DynamicOffsetView(
                                 coordinate: $coordinate,
                                 collapsed: $collapsed,
+                                viewHeight: $viewHeight,
                                 shouldShowUpgradeButton: $shouldShowUpgradeButton,
                                 shouldHideMenuBar: $shouldHideMenuBar
                             )
@@ -108,6 +112,7 @@ public struct UpgradeCourseView: View {
                 icon: CoreAssets.upgradeCalendarImage.swiftUIImage,
                 coordinate: $coordinate,
                 collapsed: $collapsed,
+                viewHeight: $viewHeight,
                 shouldShowUpgradeButton: $shouldShowUpgradeButton,
                 shouldHideMenuBar: $shouldHideMenuBar,
                 backAction: backAction
@@ -123,6 +128,7 @@ public struct UpgradeCourseView: View {
                 icon: CoreAssets.upgradeArrowImage.swiftUIImage,
                 coordinate: $coordinate,
                 collapsed: $collapsed,
+                viewHeight: $viewHeight,
                 shouldShowUpgradeButton: $shouldShowUpgradeButton,
                 shouldHideMenuBar: $shouldHideMenuBar,
                 backAction: backAction
@@ -145,6 +151,7 @@ public struct UpgradeCourseView: View {
             ),
             coordinate: .constant(0),
             collapsed: .constant(false),
+            viewHeight: .constant(0),
             shouldShowUpgradeButton: .constant(true),
             shouldHideMenuBar: .constant(false),
             backAction: nil,
@@ -161,6 +168,7 @@ public struct UpgradeCourseView: View {
             ),
             coordinate: .constant(0),
             collapsed: .constant(false),
+            viewHeight: .constant(0),
             shouldShowUpgradeButton: .constant(true),
             shouldHideMenuBar: .constant(false),
             backAction: nil,
@@ -170,6 +178,7 @@ public struct UpgradeCourseView: View {
             type: .startDateError(date: .now),
             coordinate: .constant(0),
             collapsed: .constant(false),
+            viewHeight: .constant(0),
             shouldShowUpgradeButton: .constant(true),
             shouldHideMenuBar: .constant(false),
             backAction: nil,
@@ -179,6 +188,7 @@ public struct UpgradeCourseView: View {
             type: .isEndDateOld(date: .now),
             coordinate: .constant(0),
             collapsed: .constant(false),
+            viewHeight: .constant(0),
             shouldShowUpgradeButton: .constant(true),
             shouldHideMenuBar: .constant(false),
             backAction: nil,

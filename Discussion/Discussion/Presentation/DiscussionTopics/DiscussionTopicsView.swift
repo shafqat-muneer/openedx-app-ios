@@ -17,6 +17,7 @@ public struct DiscussionTopicsView: View {
     private let courseID: String
     @Binding private var coordinate: CGFloat
     @Binding private var collapsed: Bool
+    @Binding private var viewHeight: CGFloat
     @State private var runOnce: Bool = false
     @Binding private var shouldShowUpgradeButton: Bool
     @Binding private var shouldHideMenuBar: Bool
@@ -25,6 +26,7 @@ public struct DiscussionTopicsView: View {
         courseID: String,
         coordinate: Binding<CGFloat>,
         collapsed: Binding<Bool>,
+        viewHeight: Binding<CGFloat>,
         viewModel: DiscussionTopicsViewModel,
         router: DiscussionRouter,
         shouldShowUpgradeButton: Binding<Bool>,
@@ -34,6 +36,7 @@ public struct DiscussionTopicsView: View {
         self.courseID = courseID
         self._coordinate = coordinate
         self._collapsed = collapsed
+        self._viewHeight = viewHeight
         self.router = router
         self._shouldShowUpgradeButton = shouldShowUpgradeButton
         self._shouldHideMenuBar = shouldHideMenuBar
@@ -49,6 +52,7 @@ public struct DiscussionTopicsView: View {
                         DynamicOffsetView(
                             coordinate: $coordinate,
                             collapsed: $collapsed,
+                            viewHeight: $viewHeight,
                             shouldShowUpgradeButton: $shouldShowUpgradeButton,
                             shouldHideMenuBar: $shouldHideMenuBar
                         )
@@ -58,37 +62,39 @@ public struct DiscussionTopicsView: View {
                             bannerDiscussionsDisabled
                         }
                         
-                        HStack(spacing: 11) {
-                            Image(systemName: "magnifyingglass")
-                                .foregroundColor(Theme.Colors.textInputTextColor)
-                                .padding(.leading, 16)
-                                .padding(.top, 1)
-                            Text(DiscussionLocalization.Topics.search)
-                                .foregroundColor(Theme.Colors.textInputTextColor)
-                                .font(Theme.Fonts.bodyMedium)
-                            Spacer()
-                        }
-                        .frame(minHeight: 48)
-                        .background(
-                            Theme.Shapes.textInputShape
-                                .fill(Theme.Colors.textInputBackground)
-                        )
-                        .overlay(
-                            Theme.Shapes.textInputShape
-                                .stroke(lineWidth: 1)
-                                .fill(Theme.Colors.textInputUnfocusedStroke)
-                        )
-                        .onTapGesture {
-                            viewModel.router.showDiscussionsSearch(
-                                courseID: courseID,
-                                isBlackedOut: viewModel.isBlackedOut
+                        if let topics = viewModel.discussionTopics, topics.count > 0 {
+                            HStack(spacing: 11) {
+                                Image(systemName: "magnifyingglass")
+                                    .foregroundColor(Theme.Colors.textInputTextColor)
+                                    .padding(.leading, 16)
+                                    .padding(.top, 1)
+                                Text(DiscussionLocalization.Topics.search)
+                                    .foregroundColor(Theme.Colors.textInputTextColor)
+                                    .font(Theme.Fonts.bodyMedium)
+                                Spacer()
+                            }
+                            .frame(minHeight: 48)
+                            .background(
+                                Theme.Shapes.textInputShape
+                                    .fill(Theme.Colors.textInputBackground)
                             )
+                            .overlay(
+                                Theme.Shapes.textInputShape
+                                    .stroke(lineWidth: 1)
+                                    .fill(Theme.Colors.textInputUnfocusedStroke)
+                            )
+                            .onTapGesture {
+                                viewModel.router.showDiscussionsSearch(
+                                    courseID: courseID,
+                                    isBlackedOut: viewModel.isBlackedOut
+                                )
+                            }
+                            .frameLimit(width: proxy.size.width)
+                            .padding(.horizontal, 24)
+                            .padding(.top, 10)
+                            .accessibilityElement(children: .ignore)
+                            .accessibilityLabel(DiscussionLocalization.Topics.search)
                         }
-                        .frameLimit(width: proxy.size.width)
-                        .padding(.horizontal, 24)
-                        .padding(.top, 10)
-                        .accessibilityElement(children: .ignore)
-                        .accessibilityLabel(DiscussionLocalization.Topics.search)
                         
                         // MARK: - Page Body
                         VStack {
@@ -164,7 +170,16 @@ public struct DiscussionTopicsView: View {
                                                 }
                                             }
                                         }
-                                        
+                                    } else if viewModel.isShowProgress == false {
+                                        FullScreenErrorView(
+                                            type: .noContent(
+                                                DiscussionLocalization.Error.unableToLoadDiscussion,
+                                                image: CoreAssets.information.swiftUIImage
+                                            )
+                                        )
+                                        .frame(maxWidth: .infinity)
+                                        .frame(height: proxy.size.height - viewHeight)
+                                        Spacer(minLength: -200)
                                     }
                                     Spacer(minLength: 200)
                                 }
@@ -230,6 +245,7 @@ struct DiscussionView_Previews: PreviewProvider {
             courseID: "",
             coordinate: .constant(0),
             collapsed: .constant(false),
+            viewHeight: .constant(0),
             viewModel: vm,
             router: router,
             shouldShowUpgradeButton: .constant(false),
@@ -243,6 +259,7 @@ struct DiscussionView_Previews: PreviewProvider {
             courseID: "",
             coordinate: .constant(0),
             collapsed: .constant(false),
+            viewHeight: .constant(0),
             viewModel: vm,
             router: router,
             shouldShowUpgradeButton: .constant(false),

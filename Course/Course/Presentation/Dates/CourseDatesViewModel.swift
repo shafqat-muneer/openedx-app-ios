@@ -112,18 +112,14 @@ public class CourseDatesViewModel: ObservableObject {
             await getCourseStructure(courseID: courseID)
             if courseDates?.courseDateBlocks == nil {
                 isShowProgress = false
-                errorMessage = CoreLocalization.Error.unknownError
+                courseDates = nil
                 return
             }
             isShowProgress = false
             addCourseEventsIfNecessary()
-        } catch let error {
+        } catch {
             isShowProgress = false
-            if error.isInternetError || error is NoCachedDataError {
-                errorMessage = CoreLocalization.Error.slowOrNoInternetConnection
-            } else {
-                errorMessage = CoreLocalization.Error.unknownError
-            }
+            courseDates = nil
         }
     }
     

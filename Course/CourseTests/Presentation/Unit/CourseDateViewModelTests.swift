@@ -102,8 +102,8 @@ final class CourseDateViewModelTests: XCTestCase {
         
         Verify(interactor, .getCourseDates(courseID: .any))
         
-        XCTAssertTrue(viewModel.showError)
-        XCTAssertEqual(viewModel.errorMessage, CoreLocalization.Error.unknownError, "Error view should be shown on unknown error.")
+        XCTAssertNil(viewModel.courseDates)
+        XCTAssertFalse(viewModel.isShowProgress)
     }
     
     func testNoInternetConnectionError() async throws {
@@ -132,8 +132,8 @@ final class CourseDateViewModelTests: XCTestCase {
         
         Verify(interactor, .getCourseDates(courseID: .any))
         
-        XCTAssertTrue(viewModel.showError)
-        XCTAssertEqual(viewModel.errorMessage, CoreLocalization.Error.slowOrNoInternetConnection, "Error message should be set to 'slow or no internet connection'.")
+        XCTAssertNil(viewModel.courseDates)
+        XCTAssertFalse(viewModel.isShowProgress)
     }
     
     func testSortedDateTodayToCourseDateBlockDict() {

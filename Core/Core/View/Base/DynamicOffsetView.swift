@@ -25,6 +25,7 @@ public struct DynamicOffsetView: View {
     
     @Binding private var coordinate: CGFloat
     @Binding private var collapsed: Bool
+    @Binding private var viewHeight: CGFloat
     @State private var collapseHeight: CGFloat = .zero
     
     @Environment(\.isHorizontal) private var isHorizontal
@@ -33,11 +34,13 @@ public struct DynamicOffsetView: View {
     public init(
         coordinate: Binding<CGFloat>,
         collapsed: Binding<Bool>,
+        viewHeight: Binding<CGFloat>,
         shouldShowUpgradeButton: Binding<Bool>,
         shouldHideMenuBar: Binding<Bool>
     ) {
         self._coordinate = coordinate
         self._collapsed = collapsed
+        self._viewHeight = viewHeight
         self._shouldShowUpgradeButton = shouldShowUpgradeButton
         self._shouldHideMenuBar = shouldHideMenuBar
     }
@@ -138,5 +141,6 @@ public struct DynamicOffsetView: View {
                 shouldHideMenuBar: shouldHideMenuBar
             )
         }
+        viewHeight = collapseHeight
     }
 }
