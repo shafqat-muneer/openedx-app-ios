@@ -25,9 +25,9 @@ struct MainScreenView: View {
     init(viewModel: MainScreenViewModel) {
         self.viewModel = viewModel
         UITabBar.appearance().isTranslucent = false
-        UITabBar.appearance().barTintColor = UIColor(Theme.Colors.tabbarColor)
-        UITabBar.appearance().backgroundColor = UIColor(Theme.Colors.tabbarColor)
-        UITabBar.appearance().unselectedItemTintColor = UIColor(Theme.Colors.textSecondaryLight)
+        UITabBar.appearance().barTintColor = UIColor(Theme.Colors.tabbarActiveColor)
+        UITabBar.appearance().backgroundColor = UIColor(Theme.Colors.tabbarBGColor)
+        UITabBar.appearance().unselectedItemTintColor = UIColor(Theme.Colors.tabbarInactiveColor)
         
         UITabBarItem.appearance().setTitleTextAttributes(
             [NSAttributedString.Key.font: Theme.UIFonts.labelSmall()],
