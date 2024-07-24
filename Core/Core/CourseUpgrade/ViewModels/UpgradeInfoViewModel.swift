@@ -179,4 +179,13 @@ public class UpgradeInfoViewModel: ObservableObject {
             }
         )
     }
+    
+    func trackValuePropViewed() {
+        analytics.trackValuePropViewed(
+            courseID: courseID,
+            pacing: pacing,
+            lmsPrice: lmsPrice,
+            screen: screen
+        )
+    }
 }
