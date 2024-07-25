@@ -178,7 +178,9 @@ public struct PrimaryCourseDashboardView<ProgramView: View>: View {
                     case .programs:
                         programView
                     }
-                }.padding(.top, 8)
+                }
+                .padding(.top, 8)
+                .padding(.bottom, 1)
                 // MARK: - Offline mode SnackBar
                 OfflineSnackBarView(
                     connectivity: viewModel.connectivity,
@@ -282,6 +284,8 @@ public struct PrimaryCourseDashboardView<ProgramView: View>: View {
                     VStack(alignment: .leading, spacing: 0) {
                         Spacer()
                         CoreAssets.viewAll.swiftUIImage
+                            .resizable()
+                            .frame(width: 48, height: 48)
                         Text(DashboardLocalization.Learn.viewAll)
                             .font(Theme.Fonts.labelMedium)
                             .foregroundStyle(Theme.Colors.textPrimary)
