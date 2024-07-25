@@ -1027,6 +1027,24 @@ class AnalyticsManager: AuthorizationAnalytics,
         
         logEvent(.courseUpgradeRestorePurchaseClicked, parameters: parameters)
     }
+    
+    public func trackValuePropViewed(
+        courseID: String,
+        pacing: String,
+        lmsPrice: Double,
+        screen: CourseUpgradeScreen
+    ) {
+        var parameters: [String: Any] = [
+            EventParamKey.pacing: pacing,
+            EventParamKey.courseID: courseID,
+            EventParamKey.screenName: screen.rawValue,
+            EventParamKey.category: EventCategory.inAppPurchases,
+            EventParamKey.name: EventBIValue.courseUpgradeValuePropViewed.rawValue
+        ]
+        
+        parameters.setObjectOrNil(lmsPrice, forKey: EventParamKey.lmsPrice)
+        logScreenEvent(.courseUpgradeValuePropViewed, parameters: parameters)
+    }
 }
 
 // swiftlint:enable file_length type_body_length

@@ -109,6 +109,9 @@ public struct UpgradeInfoView<Content>: View where Content: View {
         .task {
             await viewModel.fetchProduct()
         }
+        .onFirstAppear {
+            viewModel.trackValuePropViewed()
+        }
     }
 }
 

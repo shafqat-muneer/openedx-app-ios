@@ -1389,6 +1389,12 @@ open class CoreAnalyticsMock: CoreAnalytics, Mock {
 		perform?()
     }
 
+    open func trackValuePropViewed(courseID: String, pacing: String, lmsPrice: Double, screen: CourseUpgradeScreen) {
+        addInvocation(.m_trackValuePropViewed__courseID_courseIDpacing_pacinglmsPrice_lmsPricescreen_screen(Parameter<String>.value(`courseID`), Parameter<String>.value(`pacing`), Parameter<Double>.value(`lmsPrice`), Parameter<CourseUpgradeScreen>.value(`screen`)))
+		let perform = methodPerformValue(.m_trackValuePropViewed__courseID_courseIDpacing_pacinglmsPrice_lmsPricescreen_screen(Parameter<String>.value(`courseID`), Parameter<String>.value(`pacing`), Parameter<Double>.value(`lmsPrice`), Parameter<CourseUpgradeScreen>.value(`screen`))) as? (String, String, Double, CourseUpgradeScreen) -> Void
+		perform?(`courseID`, `pacing`, `lmsPrice`, `screen`)
+    }
+
     open func trackEvent(_ event: AnalyticsEvent) {
         addInvocation(.m_trackEvent__event(Parameter<AnalyticsEvent>.value(`event`)))
 		let perform = methodPerformValue(.m_trackEvent__event(Parameter<AnalyticsEvent>.value(`event`))) as? (AnalyticsEvent) -> Void
@@ -1429,6 +1435,7 @@ open class CoreAnalyticsMock: CoreAnalytics, Mock {
         case m_trackCourseUpgradeLoadError__courseID_courseIDblockID_blockIDpacing_pacingscreen_screen(Parameter<String>, Parameter<String?>, Parameter<String>, Parameter<CourseUpgradeScreen>)
         case m_trackCourseUnfulfilledPurchaseInitiated__courseID_courseIDpacing_pacingscreen_screenflowType_flowType(Parameter<String>, Parameter<String>, Parameter<CourseUpgradeScreen>, Parameter<UpgradeMode>)
         case m_trackRestorePurchaseClicked
+        case m_trackValuePropViewed__courseID_courseIDpacing_pacinglmsPrice_lmsPricescreen_screen(Parameter<String>, Parameter<String>, Parameter<Double>, Parameter<CourseUpgradeScreen>)
         case m_trackEvent__event(Parameter<AnalyticsEvent>)
         case m_trackEvent__eventbiValue_biValue(Parameter<AnalyticsEvent>, Parameter<EventBIValue>)
         case m_trackScreenEvent__event(Parameter<AnalyticsEvent>)
@@ -1561,6 +1568,14 @@ open class CoreAnalyticsMock: CoreAnalytics, Mock {
 
             case (.m_trackRestorePurchaseClicked, .m_trackRestorePurchaseClicked): return .match
 
+            case (.m_trackValuePropViewed__courseID_courseIDpacing_pacinglmsPrice_lmsPricescreen_screen(let lhsCourseid, let lhsPacing, let lhsLmsprice, let lhsScreen), .m_trackValuePropViewed__courseID_courseIDpacing_pacinglmsPrice_lmsPricescreen_screen(let rhsCourseid, let rhsPacing, let rhsLmsprice, let rhsScreen)):
+				var results: [Matcher.ParameterComparisonResult] = []
+				results.append(Matcher.ParameterComparisonResult(Parameter.compare(lhs: lhsCourseid, rhs: rhsCourseid, with: matcher), lhsCourseid, rhsCourseid, "courseID"))
+				results.append(Matcher.ParameterComparisonResult(Parameter.compare(lhs: lhsPacing, rhs: rhsPacing, with: matcher), lhsPacing, rhsPacing, "pacing"))
+				results.append(Matcher.ParameterComparisonResult(Parameter.compare(lhs: lhsLmsprice, rhs: rhsLmsprice, with: matcher), lhsLmsprice, rhsLmsprice, "lmsPrice"))
+				results.append(Matcher.ParameterComparisonResult(Parameter.compare(lhs: lhsScreen, rhs: rhsScreen, with: matcher), lhsScreen, rhsScreen, "screen"))
+				return Matcher.ComparisonResult(results)
+
             case (.m_trackEvent__event(let lhsEvent), .m_trackEvent__event(let rhsEvent)):
 				var results: [Matcher.ParameterComparisonResult] = []
 				results.append(Matcher.ParameterComparisonResult(Parameter.compare(lhs: lhsEvent, rhs: rhsEvent, with: matcher), lhsEvent, rhsEvent, "_ event"))
@@ -1602,6 +1617,7 @@ open class CoreAnalyticsMock: CoreAnalytics, Mock {
             case let .m_trackCourseUpgradeLoadError__courseID_courseIDblockID_blockIDpacing_pacingscreen_screen(p0, p1, p2, p3): return p0.intValue + p1.intValue + p2.intValue + p3.intValue
             case let .m_trackCourseUnfulfilledPurchaseInitiated__courseID_courseIDpacing_pacingscreen_screenflowType_flowType(p0, p1, p2, p3): return p0.intValue + p1.intValue + p2.intValue + p3.intValue
             case .m_trackRestorePurchaseClicked: return 0
+            case let .m_trackValuePropViewed__courseID_courseIDpacing_pacinglmsPrice_lmsPricescreen_screen(p0, p1, p2, p3): return p0.intValue + p1.intValue + p2.intValue + p3.intValue
             case let .m_trackEvent__event(p0): return p0.intValue
             case let .m_trackEvent__eventbiValue_biValue(p0, p1): return p0.intValue + p1.intValue
             case let .m_trackScreenEvent__event(p0): return p0.intValue
@@ -1624,6 +1640,7 @@ open class CoreAnalyticsMock: CoreAnalytics, Mock {
             case .m_trackCourseUpgradeLoadError__courseID_courseIDblockID_blockIDpacing_pacingscreen_screen: return ".trackCourseUpgradeLoadError(courseID:blockID:pacing:screen:)"
             case .m_trackCourseUnfulfilledPurchaseInitiated__courseID_courseIDpacing_pacingscreen_screenflowType_flowType: return ".trackCourseUnfulfilledPurchaseInitiated(courseID:pacing:screen:flowType:)"
             case .m_trackRestorePurchaseClicked: return ".trackRestorePurchaseClicked()"
+            case .m_trackValuePropViewed__courseID_courseIDpacing_pacinglmsPrice_lmsPricescreen_screen: return ".trackValuePropViewed(courseID:pacing:lmsPrice:screen:)"
             case .m_trackEvent__event: return ".trackEvent(_:)"
             case .m_trackEvent__eventbiValue_biValue: return ".trackEvent(_:biValue:)"
             case .m_trackScreenEvent__event: return ".trackScreenEvent(_:)"
@@ -1660,6 +1677,7 @@ open class CoreAnalyticsMock: CoreAnalytics, Mock {
         public static func trackCourseUpgradeLoadError(courseID: Parameter<String>, blockID: Parameter<String?>, pacing: Parameter<String>, screen: Parameter<CourseUpgradeScreen>) -> Verify { return Verify(method: .m_trackCourseUpgradeLoadError__courseID_courseIDblockID_blockIDpacing_pacingscreen_screen(`courseID`, `blockID`, `pacing`, `screen`))}
         public static func trackCourseUnfulfilledPurchaseInitiated(courseID: Parameter<String>, pacing: Parameter<String>, screen: Parameter<CourseUpgradeScreen>, flowType: Parameter<UpgradeMode>) -> Verify { return Verify(method: .m_trackCourseUnfulfilledPurchaseInitiated__courseID_courseIDpacing_pacingscreen_screenflowType_flowType(`courseID`, `pacing`, `screen`, `flowType`))}
         public static func trackRestorePurchaseClicked() -> Verify { return Verify(method: .m_trackRestorePurchaseClicked)}
+        public static func trackValuePropViewed(courseID: Parameter<String>, pacing: Parameter<String>, lmsPrice: Parameter<Double>, screen: Parameter<CourseUpgradeScreen>) -> Verify { return Verify(method: .m_trackValuePropViewed__courseID_courseIDpacing_pacinglmsPrice_lmsPricescreen_screen(`courseID`, `pacing`, `lmsPrice`, `screen`))}
         public static func trackEvent(_ event: Parameter<AnalyticsEvent>) -> Verify { return Verify(method: .m_trackEvent__event(`event`))}
         public static func trackEvent(_ event: Parameter<AnalyticsEvent>, biValue: Parameter<EventBIValue>) -> Verify { return Verify(method: .m_trackEvent__eventbiValue_biValue(`event`, `biValue`))}
         public static func trackScreenEvent(_ event: Parameter<AnalyticsEvent>) -> Verify { return Verify(method: .m_trackScreenEvent__event(`event`))}
@@ -1711,6 +1729,9 @@ open class CoreAnalyticsMock: CoreAnalytics, Mock {
         }
         public static func trackRestorePurchaseClicked(perform: @escaping () -> Void) -> Perform {
             return Perform(method: .m_trackRestorePurchaseClicked, performs: perform)
+        }
+        public static func trackValuePropViewed(courseID: Parameter<String>, pacing: Parameter<String>, lmsPrice: Parameter<Double>, screen: Parameter<CourseUpgradeScreen>, perform: @escaping (String, String, Double, CourseUpgradeScreen) -> Void) -> Perform {
+            return Perform(method: .m_trackValuePropViewed__courseID_courseIDpacing_pacinglmsPrice_lmsPricescreen_screen(`courseID`, `pacing`, `lmsPrice`, `screen`), performs: perform)
         }
         public static func trackEvent(_ event: Parameter<AnalyticsEvent>, perform: @escaping (AnalyticsEvent) -> Void) -> Perform {
             return Perform(method: .m_trackEvent__event(`event`), performs: perform)

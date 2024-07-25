@@ -96,6 +96,13 @@ public protocol CoreAnalytics {
     )
     
     func trackRestorePurchaseClicked()
+    
+    func trackValuePropViewed(
+        courseID: String,
+        pacing: String,
+        lmsPrice: Double,
+        screen: CourseUpgradeScreen
+    )
 }
 
 public extension CoreAnalytics {
@@ -205,6 +212,13 @@ public class CoreAnalyticsMock: CoreAnalytics {
     ) {}
     
     public func trackRestorePurchaseClicked() {}
+    
+    public func trackValuePropViewed(
+        courseID: String,
+        pacing: String,
+        lmsPrice: Double,
+        screen: CourseUpgradeScreen
+    ) {}
 }
 #endif
 
@@ -296,6 +310,7 @@ public enum AnalyticsEvent: String {
     case courseUpgradeSuccess = "Payments: Course Upgrade Success"
     case courseUpgradeUnfulfilledPurchaseInitiated = "Payments: Unfulfilled Purchase Initiated"
     case courseUpgradeRestorePurchaseClicked = "Payments: Restore Purchases Clicked"
+    case courseUpgradeValuePropViewed = "Payments: Value Prop Viewed"
     case logistration = "Logistration"
     case logistrationSignIn = "Logistration:Sign In"
     case logistrationRegister = "Logistration:Register"
@@ -390,6 +405,7 @@ public enum EventBIValue: String {
     case courseUpgradeSuccess = "edx.bi.app.payments.course_upgrade_success"
     case courseUpgradeUnfulfilledPurchaseInitiated = "edx.bi.app.payments.unfulfilled_purchase.initiated"
     case courseUpgradeRestorePurchaseClicked = "edx.bi.app.payments.restore_purchases.clicked"
+    case courseUpgradeValuePropViewed = "edx.bi.app.payments.value_prop.viewed"
     case logistration = "edx.bi.app.logistration"
     case logistrationSignIn = "edx.bi.app.logistration.signin"
     case logistrationRegister = "edx.bi.app.logistration.register"
