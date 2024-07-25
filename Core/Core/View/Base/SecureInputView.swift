@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Theme
 
 public struct SecureInputView: View {
     
@@ -30,9 +31,9 @@ public struct SecureInputView: View {
                 isSecured.toggle()
             }) {
                 Image(systemName: self.isSecured ? "eye.slash" : "eye")
-                    .accentColor(.gray)
-                    .frame(height: 21)
+                    .accentColor(Theme.Colors.textInputPlaceholderColor)
             }
+            .frame(height: 23)
         }
     }
 }
