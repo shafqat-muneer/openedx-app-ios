@@ -28,15 +28,15 @@ public enum DashboardLocalization {
     public static let welcomeBack = DashboardLocalization.tr("Localizable", "HEADER.WELCOME_BACK", fallback: "Welcome back. Let's keep learning.")
   }
   public enum Learn {
-    /// All Courses
-    public static let allCourses = DashboardLocalization.tr("Localizable", "LEARN.ALL_COURSES", fallback: "All Courses")
+    /// All My Courses
+    public static let allCourses = DashboardLocalization.tr("Localizable", "LEARN.ALL_COURSES", fallback: "All My Courses")
     /// Learn
     public static let title = DashboardLocalization.tr("Localizable", "LEARN.TITLE", fallback: "Learn")
     /// View All
     public static let viewAll = DashboardLocalization.tr("Localizable", "LEARN.VIEW_ALL", fallback: "View All")
-    /// View All Courses (%@)
+    /// View All My Courses (%@)
     public static func viewAllCourses(_ p1: Any) -> String {
-      return DashboardLocalization.tr("Localizable", "LEARN.VIEW_ALL_COURSES", String(describing: p1), fallback: "View All Courses (%@)")
+      return DashboardLocalization.tr("Localizable", "LEARN.VIEW_ALL_COURSES", String(describing: p1), fallback: "View All My Courses (%@)")
     }
     public enum Category {
       /// All
