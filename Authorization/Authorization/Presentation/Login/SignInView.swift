@@ -102,9 +102,8 @@ public struct SignInView: View {
                                     .foregroundColor(Theme.Colors.textPrimary)
                                     .padding(.top, 18)
                                     .accessibilityIdentifier("password_text")
-                                SecureField("", text: $password)
+                                SecureInputView($password)
                                     .font(Theme.Fonts.bodyLarge)
-                                    .foregroundColor(Theme.Colors.textInputTextColor)
                                     .padding(.all, 14)
                                     .background(
                                         Theme.InputFieldBackground(
