@@ -75,8 +75,8 @@ public struct SubtitlesView: View {
                                                   : Theme.Fonts.bodyMedium)
                                             .multilineTextAlignment(.leading)
                                             .foregroundColor(subtitle.fromTo.contains(Date(milliseconds: currentTime))
-                                                             ? Theme.Colors.textPrimary
-                                                             : Theme.Colors.accentButtonColor)
+                                                             ? Theme.Colors.accentButtonColor
+                                                             : Theme.Colors.textPrimary)
                                             
                                             .onChange(of: currentTime, perform: { _ in
                                                 if subtitle.fromTo.contains(Date(milliseconds: currentTime)) {
